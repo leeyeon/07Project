@@ -7,29 +7,30 @@
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
 
 <script type="text/javascript">
-
-	function fncLogin() {
-		var id=document.loginForm.userId.value;
-		var pw=document.loginForm.password.value;
-		if(id == null || id.length <1) {
-			alert('ID 를 입력하지 않으셨습니다.');
-			document.loginForm.userId.focus();
-			return;
-		}
-		
-		if(pw == null || pw.length <1) {
-			alert('패스워드를 입력하지 않으셨습니다.');
-			document.loginForm.password.focus();
-			return;
-		}
-	    document.loginForm.submit();
+<!--
+function fncLogin() {
+	var id=document.loginForm.userId.value;
+	var pw=document.loginForm.password.value;
+	if(id == null || id.length <1) {
+		alert('ID 를 입력하지 않으셨습니다.');
+		document.loginForm.userId.focus();
+		return;
 	}
 	
-	//Call Back Method 이용 onload 시 Event 처리
-	window.onload = function(){
-		document.getElementById("userId").focus();
+	if(pw == null || pw.length <1) {
+		alert('패스워드를 입력하지 않으셨습니다.');
+		document.loginForm.password.focus();
+		return;
 	}
+    document.loginForm.submit();
+}
 
+//Call Back Method 이용 onload 시 Event 처리
+window.onload = function(){
+	document.loginForm.userId.focus();
+	document.getElementById("userId").focus();
+}
+-->
 </script>
 
 </head>

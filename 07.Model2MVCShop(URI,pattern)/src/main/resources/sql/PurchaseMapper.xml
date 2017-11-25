@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+	
+	<resultMap id="purchaseSelectMap"
+			   type="purchase" >
+		<result property="tranNo" column="tran_no" jdbcType="INTEGER" />		
+		<result property="tranCode" column="tran_status_code" jdbcType="CHAR" />
+		<result property="paymentOption" column="payment_option" jdbcType="VARCHAR" />
+		<result property="receiverName" column="receiver_name" jdbcType="VARCHAR" />
+		<result property="receiverPhone" column="receiver_phone" jdbcType="VARCHAR" />
+		<result property="divyAddr" column="dlvy_addr" jdbcType="VARCHAR" />
+		<result property="divyRequest" column="dlvy_request" jdbcType="VARCHAR" />
+		<result property="amount" column="amount" jdbcType="NUMERIC" />
+		<result property="divyDate" column="dlvy_date" jdbcType="DATE" />
+		<result property="orderDate" column="order_date" jdbcType="DATE" />
+		<result property="buyer.userId" column="buyer_id" jdbcType="VARCHAR"/>
+		<result property="purchaseProd.prodNo" column="prod_no" jdbcType="INTEGER"/>
+		<result property="purchaseProd.price" column="price" jdbcType="INTEGER"/>
+		<result property="price" column="total_price" jdbcType="NUMERIC"/>
+		<!-- <association property="purchaseProd" resultMap="productSelectMap"/> -->
+	</resultMap>
+	
+	
+	<!-- status : 0 구매완료
+		 status : 1 구매취소 -->
+	<insert id="addPurchase"
+			parameterType="purchase"
+			useGeneratedKeys="true" keyColumn="tran_no" keyProperty="tranNo">
+		INSERT
+		INTO transaction
+		(tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone,
+		dlvy_addr, dlvy_request, dlvy_date, tran_status_code, order_date, status)
+		VALUES (seq_transaction_tran_no.nextval,
+				#{purchaseProd.prodNo},
+				#{buyer.userId},
+				#{paymentOption:VARCHAR},
+				#{receiverName:VARCHAR},
+				#{receiverPhone:VARCHAR},
+				#{divyAddr:VARCHAR},
+				#{divyRequest:VARCHAR},
+				#{divyDate:DATE},
+				'1',
+				SYSDATE,
+				'0')
+		<!-- 
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			SELECT seq_transaction_tran_no.currval FROM DUAL
+		</selectKey>
+		 -->
+	</insert>
+	
+	<!-- addPurchase - amount 넣어야 댐.
+				<if test="amount == 0"> 1 </if>
+				<if test="amount != 0"> #{amount:NUMERIC} </if>, -->
+
+	<insert id="addInventory"
+			parameterType="map">
+		INSERT
+		INTO inventory
+		(inven_no, tran_no, amount)
+		VALUES (seq_inventory_inven_no.nextval, #{tranNo}, #{amount})
+	</insert>
+
+	<select id="getPurchaseByTranNo"
+			parameterType="int"
+			resultMap="purchaseSelectMap">
+		SELECT
+		transaction.tran_no AS tran_no, product.prod_no AS prod_no, 
+		price*inventory.amount AS total_price, price,
+		buyer_id, payment_option, receiver_name, receiver_phone,
+		dlvy_addr, dlvy_request, dlvy_date, inventory.amount AS amount, tran_status_code, order_date
+		FROM product, transaction, inventory
+		<where> 
+			product.prod_no = transaction.prod_no
+			AND transaction.tran_no = inventory.tran_no
+			AND transaction.tran_no = ${value}
+		</where>
+	</select>
+	
+	<select id="getPurchaseByProdNo"
+			parameterType="int" 
+			resultMap="purchaseSelectMap">
+		SELECT
+		prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+		FROM product
+		WHERE prod_no = ${value}
+	</select>
+
+	<!-- 구매 수량 변경은 안됨. -->
+	<update id="updatePurchase"
+			parameterType="purchase">
+		UPDATE transaction
+		<set>
+			payment_option = #{paymentOption:VARCHAR},
+			receiver_name = #{receiverName:VARCHAR},
+			receiver_phone = #{receiverPhone:VARCHAR},
+			dlvy_addr = #{divyAddr:VARCHAR},
+			dlvy_request = #{divyRequest:VARCHAR},
+			dlvy_date = #{divyDate:DATE}
+		</set>
+		<where>
+			tran_no = #{tranNo}
+		</where>
+	</update>
+	
+	<update id="updateTranCode"
+			parameterType="purchase">
+		UPDATE transaction
+		<set>
+			tran_status_code = #{tranCode:CHAR}
+		</set>
+		<where>
+			<if test="tranCode == 3">
+				tran_no = #{tranNo}
+			</if>
+			<if test="tranCode != 3">
+				prod_no = #{purchaseProd.prodNo}
+			</if>
+		</where>
+	</update>
+	
+	<select id="getList"
+			parameterType="map"
+			resultMap="purchaseSelectMap">
+		SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+				FROM	( 
+				<if test="listCode == 'purchase'">
+					<include refid="selectPurchaseSql" />
+				</if>
+				<if test="listCode == 'sale'">
+					<include refid="selectSaleSql" />
+				</if>) inner_table
+				WHERE ROWNUM &lt;= #{search.endRowNum} )
+		WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum} 
+	</select>
+		
+	<select id="getTotalCount"
+			parameterType="java.util.Map"
+			resultType="int">
+		SELECT COUNT(*)
+		FROM ( 	<if test="listCode == 'purchase'">
+					<include refid="selectPurchaseSql" />
+				</if>
+				<if test="listCode == 'sale'">
+					<include refid="selectSaleSql" />
+				</if> ) countTable
+	</select>
+	
+	<sql id="selectSaleSql">
+		SELECT
+		inventory.amount AS amount, tran_status_code, product.prod_no AS prod_no,
+		buyer_id, prod_name, price, image_file, product.reg_date AS reg_date
+		FROM product, transaction, inventory
+		<where>
+			product.prod_no = transaction.prod_no(+)
+			AND transaction.tran_no = inventory.tran_no
+		</where>
+		ORDER BY 
+		<if test="search.searchOrderbyPrice != null">
+			<if test="search.searchOrderbyPrice == 0 and search.searchOrderbyPrice !='' ">
+				price DESC, reg_date
+			</if>
+			<if test="search.searchOrderbyPrice == 1 and search.searchOrderbyPrice !='' ">
+				price ASC, reg_date
+			</if>
+		</if>
+		<if test="searchOrderbyPrice == null">
+			reg_date
+		</if>
+	</sql>
+	
+	<sql id="selectPurchaseSql">
+		SELECT
+		DISTINCT
+		transaction.tran_no, transaction.prod_no AS prod_no, inventory.amount AS amount,
+		price*inventory.amount AS total_price, price,  transaction.order_date,
+		receiver_name, receiver_phone, tran_status_code
+		FROM transaction, product, inventory
+		<where>
+			transaction.prod_no = product.prod_no
+			AND transaction.tran_no = inventory.tran_no
+			AND buyer_id = #{buyerId}
+		</where>
+		ORDER BY transaction.order_date
+	</sql>
+	
+	<select id="checkPurchase"
+			parameterType="int"
+			resultType="int">
+		SELECT
+		product.amount - count(inventory.amount) AS inventory
+		FROM product,transaction, inventory
+		<where>
+			product.prod_no = transaction.prod_no
+			AND transaction.tran_no = inventory.tran_no
+			AND product.prod_no = ${value}
+		</where>
+		GROUP BY product.amount;
+	</select>
+	 
+</mapper>

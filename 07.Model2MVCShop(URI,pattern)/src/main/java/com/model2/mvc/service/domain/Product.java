@@ -2,6 +2,8 @@ package com.model2.mvc.service.domain;
 
 import java.sql.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 
 public class Product {
 	
@@ -16,6 +18,7 @@ public class Product {
 	private int inventory;
 	private String manuDate;
 	private Date regDate;
+	private MultipartFile uploadFile;
 	
 	public Product(){
 	}
@@ -83,6 +86,14 @@ public class Product {
 
 	public void setInventory(int inventory) {
 		this.inventory = inventory;
+	}
+
+	public MultipartFile getUploadFile() {
+		return uploadFile;
+	}
+
+	public void setUploadFile(MultipartFile uploadFile) {
+		this.uploadFile = uploadFile;
 	}
 
 	@Override
