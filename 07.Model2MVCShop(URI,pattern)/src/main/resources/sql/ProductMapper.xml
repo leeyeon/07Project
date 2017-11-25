@@ -115,7 +115,8 @@
 				</if>
 			</if>
 		</where>
-		ORDER BY product.amount - NVL(inventory.amount,0) = 0
+		ORDER BY (  CASE WHEN ( product.amount - NVL(inventory.amount,0) ) = 0
+					THEN 2147483647 ELSE ( product.amount - NVL(inventory.amount,0) ) END )
 		<if test="searchOrderbyPrice != null">
 			<if test="searchOrderbyPrice == 0 and searchOrderbyPrice !='' ">
 				, price DESC, reg_date
