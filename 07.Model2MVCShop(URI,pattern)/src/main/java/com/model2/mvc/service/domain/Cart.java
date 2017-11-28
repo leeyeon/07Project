@@ -6,8 +6,11 @@ public class Cart {
 
 	private int cartNo;
 	private int prodNo;
+	private String prodName;
 	private String userId;
 	private Date cartDate;
+	private int price;
+	private String status;
 	
 	public Cart() {
 		
@@ -45,9 +48,34 @@ public class Cart {
 		this.cartDate = cartDate;
 	}
 
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public String getProdName() {
+		return prodName;
+	}
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
-		return "Cart [cartNo=" + cartNo + ", prodNo=" + prodNo + ", userId=" + userId + ", cartDate=" + cartDate + "]";
+		return "Cart [cartNo=" + cartNo + ", prodNo=" + prodNo + ", prodName=" + prodName + ", userId=" + userId
+				+ ", cartDate=" + cartDate + ", price=" + price + ", status=" + status + "]";
 	}
 
 }

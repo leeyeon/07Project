@@ -33,21 +33,18 @@
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0"	style="margin-top: 10px;">
 	<tr>
-		<td colspan="11">
+		<td colspan="7">
 		전체 ${resultPage.totalCount} 건수, 현재 ${resultPage.currentPage} 페이지</td>
 	</tr>
 	<tr>
 		<td class="ct_list_b" width="100">No</td>
 		<td class="ct_line02"></td>
-		<td class="ct_list_b" width="200">상품명</td>
+		<td class="ct_list_b" width="300">상품명</td>
 		<td class="ct_line02"></td>
-		<td class="ct_list_b" width="150">주문 가격(개수)</td>
+		<td class="ct_list_b" width="200">상품가격</td>
 		<td class="ct_line02"></td>
-		<td class="ct_list_b">구매날짜</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b">배송현황</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b">정보수정</td>
+		<td class="ct_list_b">장바구니 날짜</td>
+
 	</tr>
 	<tr>
 		<td colspan="11" bgcolor="808285" height="1"></td>
@@ -55,52 +52,27 @@
 	<c:forEach var="cart" items="${list}">
 	<tr class="ct_list_pop">
 		<td align="center">
-			<a href="/getProduct.do?prodNo=${cart_prodNo}">
-			${list.indexOf(cart) + 1}</a>
+			<a href="/cart/getCart?cartNo=${cart.cartNo}">
+				${list.indexOf(cart) + 1}
+			</a>
 		</td>
 		<td></td>
 		<td align="center">
-			<a href="/getProduct.do?prodNo=${cart_prodNo}">
-			${cart.}</a>
-		</td>
-		<td></td>
-		<td align="left"><fmt:formatNumber value="${purchase.price}" pattern="#,###"/>원 ( ${purchase.amount} )</td>
-		<td></td>
-		<td align="left">
-			<fmt:formatDate value="${purchase.orderDate}" dateStyle="long"/> </td>
-		<td></td>
-		<td align="left">
-		
-		<c:set var="state" value=""/>
-		<c:set var="code" value="${purchase.tranCode.trim()}"/>
-		<c:choose>
-			<c:when test="${code eq 1}">
-				<c:set var="state" value="구매 완료 상태"/>
-			</c:when>
-			<c:when test="${code eq 2}">
-				<c:set var="state" value="배송 중"/>
-			</c:when>
-			<c:when test="${code eq 3}">
-				<c:set var="state" value="배송 완료 상태"/>
-			</c:when>
-			<c:otherwise>
-				<c:set var="state" value="판매 중"/>
-			</c:otherwise>
-		</c:choose>
-
-		현재 ${state}입니다.
+			<a href="/product/getProduct?prodNo=${cart.prodNo}">
+			${cart.prodName}</a>
 		</td>
 		<td></td>
 		<td align="left">
-		
-		<c:if test="${code eq 2 }">
-			<a href="/updateTranCode.do?tranNo=${purchase.tranNo}&tranCode=3">물건도착</a>
-		</c:if>
+			<fmt:formatNumber value="${cart.price}" pattern="#,###"/>원
 		</td>
+		<td></td>
+		<td align="left">
+			<fmt:formatDate value="${cart.cartDate}" dateStyle="long"/>
 		</td>
+		<td></td>
 	</tr>
 	<tr>
-		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
+		<td colspan="7" bgcolor="D6D7D6" height="1"></td>
 	</tr>
 	
 	</c:forEach>

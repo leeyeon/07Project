@@ -27,7 +27,7 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public boolean addCart(Cart cart) throws Exception {
 		
-		if(!cartDao.checkCart(cart.getProdNo())) {
+		if(!cartDao.checkCart(cart.getProdNo(), cart.getUserId())) {
 			cartDao.addCart(cart);
 			return true;
 		}

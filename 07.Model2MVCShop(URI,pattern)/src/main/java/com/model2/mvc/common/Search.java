@@ -17,8 +17,8 @@ public class Search {
 	private int startRowNum;
 	private String searchOrderbyPrice;
 	private String searchOrderbyName;
-	private String searchOrderbyRegDate;
-	private String searchOrderbyAmount;
+	//private String searchOrderbyRegDate;
+	//private String searchOrderbyAmount;
 	
 	///Constructor
 	public Search() {
@@ -78,27 +78,11 @@ public class Search {
 		this.searchOrderbyName = searchOrderbyName;
 	}
 
-	public String getSearchOrderbyRegDate() {
-		return searchOrderbyRegDate;
-	}
-
-	public void setSearchOrderbyRegDate(String searchOrderbyRegDate) {
-		this.searchOrderbyRegDate = searchOrderbyRegDate;
-	}
-
-	public String getSearchOrderbyAmount() {
-		return searchOrderbyAmount;
-	}
-
-	public void setSearchOrderbyAmount(String searchOrderbyAmount) {
-		this.searchOrderbyAmount = searchOrderbyAmount;
-	}
-
 	@Override
 	public String toString() {
-		return "Search [currentPage=" + currentPage + ", searchCondition="
-				+ searchCondition + ", searchKeyword=" + searchKeyword
-				+ ", pageSize=" + pageSize + ", endRowNum=" + endRowNum
-				+ ", startRowNum=" + startRowNum + "]";
+		return "Search [currentPage=" + currentPage + ", searchCondition=" + searchCondition + ", searchKeyword="
+				+ searchKeyword + ", pageSize=" + pageSize + ", endRowNum=" + endRowNum + ", startRowNum=" + startRowNum
+				+ ", searchOrderbyPrice=" + searchOrderbyPrice + ", searchOrderbyName=" + searchOrderbyName + "]";
 	}
+
 }

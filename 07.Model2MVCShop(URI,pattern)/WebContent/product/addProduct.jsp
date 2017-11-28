@@ -186,7 +186,7 @@ function resetData(){
 		<td class="ct_write01">
 			<c:if test="${empty product}">
 				<input		type="file" name="uploadFile" class="ct_input_g"
-							style="width: 200px; height: 19px" maxLength="13"/>
+							style="width: 300px; height: 100px" maxLength="13"/>
 			</c:if>
 			<c:if test="${!empty product}">
 				${product.fileName}

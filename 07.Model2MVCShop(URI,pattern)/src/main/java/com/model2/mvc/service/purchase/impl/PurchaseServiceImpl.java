@@ -1,5 +1,7 @@
 package com.model2.mvc.service.purchase.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,15 +36,26 @@ public class PurchaseServiceImpl implements PurchaseService {
 		
 		return addInventory;
 	}
-
+	
 	@Override
-	public Purchase getPurchaseBytranNo(int tranNo) throws Exception {
-		return purchaseDao.getPurchaseBytranNo(tranNo);
-	}
-
-	@Override
-	public Purchase getPurchaseByprodNo(int prodNo) throws Exception {
-		return purchaseDao.getPurchaseByprodNo(prodNo);
+	public Purchase getPurchase(int no, String code) throws Exception {
+		Purchase purchase = null;
+		if(code.equals("tranNo")) {
+			purchase = purchaseDao.getPurchaseBytranNo(no);
+		} else {
+			purchase = purchaseDao.getPurchaseByprodNo(no);
+		}
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+		
+		Date date = null;
+		if(purchase.getDivyDate() != null) {
+			date = dateFormat.parse(purchase.getDivyDate());
+			purchase.setDivyDate((new SimpleDateFormat("YYYY-MM-DD")).format(date));
+		}
+		
+		System.out.println("date :: "+date);
+		
+		return purchase;
 	}
 
 	@Override

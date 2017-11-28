@@ -90,13 +90,10 @@ public class PurchaseController {
 	public String getPurchase(@RequestParam("tranNo") int tranNo,
 							Model model) throws Exception {
 		
-		Purchase purchase = purchaseService.getPurchaseBytranNo(tranNo);
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-		Date date = dateFormat.parse(purchase.getDivyDate());
+		Purchase purchase = purchaseService.getPurchase(tranNo, "tranNo");
+
 		
-		System.out.println(date);
 		
-		purchase.setDivyDate((new SimpleDateFormat("YYYY-MM-DD")).format(date));
 		model.addAttribute("purchase", purchase);
 		
 		return "forward:/purchase/getPurchase.jsp";
@@ -106,7 +103,7 @@ public class PurchaseController {
 	public String updatePurchaseView(@RequestParam("tranNo") int tranNo,
 									Model model) throws Exception {
 		
-		Purchase purchase = purchaseService.getPurchaseBytranNo(tranNo);
+		Purchase purchase = purchaseService.getPurchase(tranNo, "tranNo");
 		//System.out.println(purchase.getDivyDate());
 		
 		// yyyy-mm-dd hh:mm:ss -> YYYYMMDD

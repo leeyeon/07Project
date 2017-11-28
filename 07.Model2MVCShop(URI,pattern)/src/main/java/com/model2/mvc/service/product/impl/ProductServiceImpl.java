@@ -30,19 +30,19 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public int addProduct(Product product) throws Exception {
-		// TODO Auto-generated method stub
+
 		return productDao.addProduct(product);
 	}
 
 	@Override
 	public Product getProduct(int prodNo) throws Exception {
-		// TODO Auto-generated method stub
+
 		return productDao.getProduct(prodNo);
 	}
 
 	@Override
 	public Map<String, Object> getProductList(Search search) throws Exception {
-		// TODO Auto-generated method stub
+
 		List<Product> list = productDao.getProductList(search);
 		int totalCount = productDao.getTotalCount(search);
 		

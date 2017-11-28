@@ -23,11 +23,11 @@ public class CartServiceTest {
 	@Qualifier("cartServiceImpl")
 	CartService cartService;
 	
-	int prodNo = 10008;
+	int prodNo = 10021;
 	int cartNo = 10000;
-	String userId = "testUserId";
+	String userId = "user05";
 	
-	//@Test
+	@Test
 	public void testAddCart() throws Exception {
 		
 		System.out.println("여기여기");
@@ -58,7 +58,8 @@ public class CartServiceTest {
 	 	System.out.println("totalCount :: " +totalCount);
 	}
 	
-	@Test
+	//장바구니 없애깅깅
+	//@Test
 	public void testUpdateCartStatus() throws Exception {
 		
 		boolean result = cartService.updateCartStatus(cartNo);

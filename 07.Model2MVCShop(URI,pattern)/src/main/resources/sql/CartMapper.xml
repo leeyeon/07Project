@@ -11,7 +11,9 @@
 		<result property="cartNo" column="cart_no" jdbcType="INTEGER" />		
 		<result property="userId" column="user_id" jdbcType="VARCHAR"/>
 		<result property="prodNo" column="prod_no" jdbcType="INTEGER"/>
+		<result property="prodName" column="prod_name" jdbcType="VARCHAR"/>
 		<result property="cartDate" column="cart_date" jdbcType="DATE"/>
+		<result property="price" column="price" jdbcType="INTEGER"/>
 		<result property="status" column="status" jdbcType="CHAR"/>
 	</resultMap>
 
@@ -26,13 +28,14 @@
 	
 	<!-- 장바구니 있으면? check -->
 	<select id="checkCart"
-			parameterType="int"
+			parameterType="map"
 			resultType="int">
 		SELECT
 		count(*)
 		FROM cart
 		<where>
-			prod_no = ${value}
+			prod_no = ${prodNo}
+			AND user_id = #{userId}
 			AND status = 0
 		</where>
 	</select>
@@ -67,13 +70,12 @@
 	
 	<sql id="selectCartSql">
 		SELECT
-		cart_no, user_id, product.prod_no AS prod_no, prod_name,
-		cart_date
+		cart_no, product.prod_no AS prod_no, prod_name, cart_date, price
 		FROM cart, product
 		<where>
 			product.prod_no = cart.prod_no
 			AND user_id = #{userId}
-			AND status = 0
+			AND cart.status = 0
 		</where>
 	</sql>
 

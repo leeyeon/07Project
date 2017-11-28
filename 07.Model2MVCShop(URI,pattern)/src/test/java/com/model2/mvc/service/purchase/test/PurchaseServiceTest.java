@@ -63,14 +63,14 @@ public class PurchaseServiceTest {
 	// tranNo ·Î getPurchase...
 	public void testGetPurchaseBytranNo() throws Exception {
 		
-		Purchase purchase = purchaseService.getPurchaseBytranNo(tranNo);
+		Purchase purchase = purchaseService.getPurchase(tranNo,"tranNo");
 		System.out.println(purchase);
 	}
 	
 	//@Test
 	public void testGetPurchaseByprodNo() throws Exception {
 		
-		Purchase purchase = purchaseService.getPurchaseByprodNo(prodNo);
+		Purchase purchase = purchaseService.getPurchase(prodNo, "prodNo");
 		System.out.println(purchase);
 	}
 
@@ -100,7 +100,7 @@ public class PurchaseServiceTest {
 		System.out.println("testUpdatePurchase ::" + result);
 		System.out.println(purchase);
 		
-		Purchase check = purchaseService.getPurchaseBytranNo(tranNo);
+		Purchase check = purchaseService.getPurchase(tranNo,"tranNo");
 		System.out.println(check);
 	 }
 	 
@@ -120,7 +120,7 @@ public class PurchaseServiceTest {
 		System.out.println("testUpdateTranCode ::" + result);
 		System.out.println(purchase);
 		
-		Purchase check = purchaseService.getPurchaseBytranNo(tranNo);
+		Purchase check = purchaseService.getPurchase(tranNo,"tranNo");
 		System.out.println(check);
 	 }
 	 

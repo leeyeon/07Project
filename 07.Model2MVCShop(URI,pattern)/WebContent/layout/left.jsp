@@ -92,13 +92,30 @@ function history(){
 					<a href="/purchase/listPurchase?menu=purchase"  target="rightFrame">구매이력조회</a>
 				</td>
 			</tr>
-			</c:if>
-			
+
+			<tr>
+				<td class="DepthEnd">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="Depth03">
+					<a href="/cart/listCart?userId=${user.userId}" target="rightFrame">장바구니조회</a>
+				</td>
+			</tr>
+			</c:if>	
+				
 			<tr>
 				<td class="DepthEnd">&nbsp;</td>
 			</tr>
 			<tr>
 				<td class="Depth03"><a href="javascript:history()">최근 본 상품</a></td>
+			</tr>
+			<tr>
+				<td class="DepthEnd">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="Depth03">
+					<a href="/test/multiFileUpload"  target="rightFrame">MultiFileUpload</a>
+				</td>
 			</tr>
 		</table>
 	</td>

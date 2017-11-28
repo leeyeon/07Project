@@ -52,8 +52,10 @@
 	<tr>
 		<td colspan="11" bgcolor="808285" height="1"></td>
 	</tr>
+	
 	<c:forEach var="purchase" items="${list}">
 	<tr class="ct_list_pop">
+
 		<td align="center">
 			<a href="/purchase/getPurchase?tranNo=${purchase.tranNo}">
 			${list.indexOf(purchase) + 1}</a>
@@ -98,19 +100,24 @@
 			<a href="/purchase/updateTranCode?tranNo=${purchase.tranNo}&tranCode=3">물건도착</a>
 		</c:if>
 		</td>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
 	</tr>
 	
 	</c:forEach>
+
 	
+	<tr>
+		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
+	</tr>	
 </table>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 10px;">
 	<tr>
 		<td align="center">
+			
+	<c:if test="${list == null || list.size() <= 0}">
+		구매하신 상품이 없습니다. <br/><br/>
+	</c:if>
+	
 		<input type="hidden" id="currentPage" name="currentPage" value=""/>
 		<jsp:include page="../common/pageNavigator.jsp"/>
 		</td>

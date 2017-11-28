@@ -63,6 +63,7 @@ public class ProductController {
 		
 		product.setManuDate(product.getManuDate().replaceAll("-", "").trim());
 		
+		//MultipartFile uploadFile = product.getUploadFile();
 		if(uploadFile != null) {
 			String fileName = uploadFile.getOriginalFilename();
 			System.out.println("fileName :: " +fileName);
@@ -195,10 +196,10 @@ public class ProductController {
 				new Page( currentPage, ((Integer)map.get("totalCount")).intValue(), 
 				pageUnit, pageSize);
 		
-		model.addAttribute("list", map.get("list"));
-		model.addAttribute("resultPage", resultPage);
-		model.addAttribute("search", search);
-		model.addAttribute("menu", menu);
+		model.addAttribute("list", map.get("list"))
+			 .addAttribute("resultPage", resultPage)
+			 .addAttribute("search", search)
+			 .addAttribute("menu", menu);
 		
 		return "forward:/product/listProduct.jsp";
 	}

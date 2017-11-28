@@ -44,8 +44,12 @@ public class CartDaoImpl implements CartDao {
 	}
 
 	@Override
-	public boolean checkCart(int prodNo) throws Exception {
-		if((int)sqlSession.selectOne("CartMapper.checkCart", prodNo) == 1) {
+	public boolean checkCart(int prodNo, String userId) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("prodNo", prodNo);
+		map.put("userId", userId);
+		
+		if((int)sqlSession.selectOne("CartMapper.checkCart", map) == 1) {
 			return true;
 		} else {
 			return false;

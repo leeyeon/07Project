@@ -14,7 +14,7 @@ public interface CartDao {
 	// 장바구니 취소!
 	public int updateCartStatus(int cartNo) throws Exception;
 	
-	public boolean checkCart(int prodNo) throws Exception;
+	public boolean checkCart(int prodNo, String userId) throws Exception;
 	
 	public int getTotalCount(Search search, String userId) throws Exception;
 }
