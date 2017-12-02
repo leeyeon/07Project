@@ -9,15 +9,53 @@
 <title>상품 목록 조회</title>
 
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
 
+	function fncGetList(currentPage) {
+		//alert();
+		$("#currentPage").val(currentPage);
+		$("form").attr("method" , "POST").attr("action" , "/purchase/listSale").submit();
+	}
+	
+	$(function() {
+		
+		var noIndex = $("#list td:contains('No')").index()+1;
+		var prodIndex = $("#list td:contains('상품정보')").index()+1;
+		var tranIndex = $("#list td:contains('현재상태')").index()+1;
+		
+		$("tr.ct_list_pop td:nth-child("+noIndex+")").bind("click", function(){
+			var index = ($("tr.ct_list_pop td:nth-child("+noIndex+")").index(this));
+			self.location="/purchase/getPurchase?tranNo="+$($("input:hidden[name='tranNo']")[index]).val();
+		});
+		
+		$("tr.ct_list_pop td:nth-child("+prodIndex+")").bind("click", function() {
+			//alert();
+			var index = $("tr.ct_list_pop td:nth-child("+prodIndex+")").index(this);
+			//console.log("클릭 Index :: "+index);
+			var prodNo = $($("input[name=prodNo]")[index]).val();
+			//console.log("상품번호 :: "+prodNo);
 
+			self.location = "/product/getProduct?prodNo="+prodNo+"&menu=${menu}";
+		});
+
+		$("td:contains('배송하기')").bind("click", function(){
+			var index = $("tr.ct_list_pop td:nth-child("+tranIndex+")").index(this)
+			var prodNo = $($("input[name=prodNo]")[index]).val();
+			//alert(prodNo+" :: index :: "+index);
+			self.location="/purchase/updateTranCodeByProd?prodNo="+prodNo+"&tranCode=2";
+		});
+		
+	});
+
+</script>
 </head>
 
 <body bgcolor="#ffffff" text="#000000">
 
 <div style="width:98%; margin-left:10px;">
 
-<form name="detailForm" action="/purchase/listSale?menu=${menu}" method="post">
+<form name="detailForm">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>
@@ -39,7 +77,8 @@
 	</tr>
 </table>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;"
+id="list">
 	<tr>
 		<td colspan="13" >
 		전체 ${resultPage.totalCount} 건수, 현재 ${resultPage.currentPage} 페이지</td>
@@ -55,22 +94,9 @@
 		<td class="ct_list_b" width="120">상품번호</td>
 		<td class="ct_line02"></td>
 		</c:if>
-		
 		<td class="ct_list_b" width="450">상품정보</td>
 		<td class="ct_line02"></td>		
-		<td class="ct_list_b" width="120">가격
-			<c:choose>
-				<c:when test="${search.searchOrderbyPrice eq '0'}">
-					<a href="javascript:fncGetList('1','1');">▼</a>
-				</c:when>
-				<c:when test="${search.searchOrderbyPrice eq '1'}">
-					<a href="javascript:fncGetList('0','1');">▲</a>
-				</c:when>
-				<c:otherwise>
-					<a href="javascript:fncGetList('1',${resultPage.currentPage});">◇</a>
-				</c:otherwise>
-			</c:choose>
-		</td>
+		<td class="ct_list_b" width="120">가격</td>
 		<td class="ct_line02"></td>
 		<td class="ct_list_b" width="100">상품개수</td>	
 		<td class="ct_line02"></td>
@@ -83,7 +109,9 @@
 	</tr>
 
 	<c:forEach var="purchase" items="${list}">
-		<c:set var="product" value="${purchase.purchaseProd}"/>
+	<input type="hidden" name="tranNo" value="${purchase.tranNo}"/>
+	<input type="hidden" name="prodNo" value="${purchase.purchaseProd.prodNo}"/>
+	<c:set var="product" value="${purchase.purchaseProd}"/>
 		<tr class="ct_list_pop">
 			<td align="center">${list.indexOf(purchase) + 1}</td>
 			<td></td>
@@ -92,21 +120,10 @@
 			<td></td>
 			</c:if>
 			<td align="left">
-				<c:choose>
-					<c:when test="${product.amount == 0}">
-						<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
-						height="90px" width="100px" border="0" align="absmiddle"
-						style="padding: 5px"/>&nbsp;
-						${product.prodName}
-					</c:when>
-					<c:otherwise>
-						<a href="/getProduct.do?prodNo=${product.prodNo}&menu=${menu}">
-						<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
-						height="90px" width="100px" border="0" align="absmiddle"
-						style="padding: 5px"/>&nbsp;
-						${product.prodName}</a>
-					</c:otherwise>
-				</c:choose>
+				<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
+				height="90px" width="100px" border="0" align="absmiddle"
+				style="padding: 5px"/>&nbsp;
+				${product.prodName}
 			</td>
 			<td></td>
 			<td align="right"><fmt:formatNumber value="${product.price}" pattern="#,###"/> 원</td>
@@ -126,7 +143,7 @@
 			
 			</c:choose>
 			<c:if test="${purchase.tranCode.trim() eq '1' && menu eq 'sale' }">
-				<a href="/purchase/updateTranCodeByProd?prodNo=${product.prodNo}&tranCode=2">배송하기</a>
+				배송하기
 			</c:if>
 			
 			</td>
@@ -141,7 +158,6 @@
 	<tr>
 		<td align="center">
 			<input type="hidden" id="currentPage" name="currentPage" value=""/>
-			<input type="hidden" id="priceOrderbyCode" name="priceOrderbyCode" value=""/>
 			
 			<jsp:include page="../common/pageNavigator.jsp"/>
     	</td>

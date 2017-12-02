@@ -206,7 +206,7 @@ public class ProductController {
 	}
 	
 	@RequestMapping(value="history")
-	public String history(@CookieValue(value="history", defaultValue="null") String history,
+	public String history(@CookieValue(value="history", defaultValue="0") String history,
 								Model model) {
 		
 		String[] result = null;
@@ -216,6 +216,7 @@ public class ProductController {
 		}
 		
 		model.addAttribute("history", result);
+		System.out.println(result.length);
 		
 		//System.out.println("history.isEmpty() ? :: "+history.isEmpty());
 			

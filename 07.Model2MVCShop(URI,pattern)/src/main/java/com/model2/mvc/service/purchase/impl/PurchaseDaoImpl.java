@@ -71,7 +71,15 @@ public class PurchaseDaoImpl implements PurchaseDao {
 		Map<String, Object> map = new HashMap<String,Object>();
 		map.put("search", search);
 		map.put("listCode", "sale");
-		return sqlSession.selectList("PurchaseMapper.getList", map);
+		
+		List<Purchase> list = sqlSession.selectList("PurchaseMapper.getList", map);
+		
+		for (Purchase purchase : list) {
+			System.out.println(purchase);
+			purchase.setPurchaseProd(sqlSession.selectOne("ProductMapper.getProduct", purchase.getPurchaseProd().getProdNo()));
+		}
+		
+		return list;
 	}
 
 	@Override

@@ -5,23 +5,36 @@
 
 <html>
 <head>
-<link rel="stylesheet" href="/css/admin.css" type="text/css">
-
 <title>구매정보 수정</title>
 
+<script type="text/javascript" src="../javascript/calendar.js"></script>
+<link rel="stylesheet" href="/css/admin.css" type="text/css">
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript">
-<!--
-function fncUpdatePurchase() {
-	document.updatePurchase.submit();
-}
--->
+
+	$(function() {
+		
+		$("td.ct_btn01:contains('수정')").bind("click", function() {
+			$("form").attr("method","POST")
+					 .attr("action","/purchase/updatePurchase?tranNo=${purchase.tranNo}").submit();
+		})
+		
+		$( "td.ct_btn01:contains('취소')" ).on("click" , function() {
+			$("form")[0].reset();
+		});
+		
+		$( "td.ct_write01 img" ).on("click" , function() {
+			show_calendar('document.detailForm.divyDate',$('input[name=divyDate]').val());
+		});
+	})
+
 </script>
 
 </head>
 
 <body bgcolor="#ffffff" text="#000000">
 
-<form name="updatePurchase" method="post"	action="/purchase/updatePurchase?tranNo=${purchase.tranNo}">
+<form name="detailForm" >
 <input type="hidden" name="buyerId" value="${purchase.buyer.userId}">
 
 <table width="100%" height="37" border="0" cellpadding="0" cellspacing="0">
@@ -120,8 +133,7 @@ function fncUpdatePurchase() {
 		<td width="200" class="ct_write01">
 			<input type="text" readonly="readonly" name="divyDate" class="ct_input_g" value="${purchase.divyDate}"
 						style="width: 200px; height: 19px" maxLength="20" />
-				<img 	src="../images/ct_icon_date.gif" width="15" height="15"	
-							onclick="show_calendar('document.updatePurchase.divyDate', document.updatePurchase.divyDate.value)"/>
+				<img 	src="../images/ct_icon_date.gif" width="15" height="15"	/>
 		</td>
 	</tr>
 	<tr>
@@ -139,7 +151,7 @@ function fncUpdatePurchase() {
 					<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
 				</td>
 				<td background="/images/ct_btnbg02.gif" class="ct_btn01"	style="padding-top: 3px;">
-					<a href="javascript:fncUpdatePurchase();">수정</a>
+					수정
 				</td>
 				<td width="14" height="23">
 					<img src="/images/ct_btnbg03.gif" width="14" height="23"/>
@@ -149,7 +161,7 @@ function fncUpdatePurchase() {
 					<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
 				</td>
 				<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top: 3px;">
-					<a href="javascript:history.go(-1)">취소</a>
+					취소
 				</td>
 				<td width="14" height="23">
 					<img src="/images/ct_btnbg03.gif" width="14" height="23"/>

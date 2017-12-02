@@ -30,8 +30,8 @@
 	 	$(".Depth03:contains('회원정보조회')" ).bind("click" , function() {
 	 		loc = $(".Depth03").index(this);
 	 		$(window.parent.frames["rightFrame"].document.location).attr("href","/user/listUser");
-		}); 
-		
+		});
+
 		$(".Depth03:contains('판매상품등록')").bind("click", function() {
 			loc = $(".Depth03").index(this);
 			$(window.parent.frames["rightFrame"].document.location).attr("href","/product/addProduct");
@@ -40,6 +40,11 @@
 		$(".Depth03:contains('판매상품관리')").bind("click", function() {
 			loc = $(".Depth03").index(this);
 			$(window.parent.frames["rightFrame"].document.location).attr("href","/product/listProduct?menu=manage");
+		});
+
+		$(".Depth03:contains('상품배송관리')").bind("click", function() {
+			loc = $(".Depth03").index(this);
+			$(window.parent.frames["rightFrame"].document.location).attr("href","/purchase/listSale?menu=sale");
 		});
 		
 		$(".Depth03:contains('상품검색')").bind("click", function() {
@@ -136,6 +141,11 @@
 					<td class="Depth03">
 						<!-- <a href="/listProduct.do?menu=manage"  target="rightFrame">판매상품관리</a> -->
 						판매상품관리
+					</td>
+				</tr>
+				<tr>
+					<td class="Depth03">
+							상품배송관리
 					</td>
 				</tr>
 				<tr>

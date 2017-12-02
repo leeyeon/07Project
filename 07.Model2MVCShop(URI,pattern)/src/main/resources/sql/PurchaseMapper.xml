@@ -154,25 +154,14 @@
 	
 	<sql id="selectSaleSql">
 		SELECT
-		inventory.amount AS amount, tran_status_code, product.prod_no AS prod_no,
-		buyer_id, prod_name, price, image_file, product.reg_date AS reg_date
+		transaction.tran_no, product.prod_no AS prod_no,
+		inventory.amount AS amount, tran_status_code, buyer_id
 		FROM product, transaction, inventory
 		<where>
 			product.prod_no = transaction.prod_no(+)
 			AND transaction.tran_no = inventory.tran_no
 		</where>
-		ORDER BY 
-		<if test="search.searchOrderbyPrice != null">
-			<if test="search.searchOrderbyPrice == 0 and search.searchOrderbyPrice !='' ">
-				price DESC, reg_date
-			</if>
-			<if test="search.searchOrderbyPrice == 1 and search.searchOrderbyPrice !='' ">
-				price ASC, reg_date
-			</if>
-		</if>
-		<if test="searchOrderbyPrice == null">
-			reg_date
-		</if>
+		ORDER BY reg_date
 	</sql>
 	
 	<sql id="selectPurchaseSql">

@@ -9,60 +9,74 @@
 <title>상품 목록 조회</title>
 
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
+<style>
+.bubble {
+    transform: scale(1);
+    width: 120%;
+    height: 120%;
+    transition: all 2s;
+}
+</style>
 
-	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript">
-	
-		$(function() {
-			
-			$("td.ct_btn01:contains('검색')").bind("click", function() {
-				fncGetList('','1');
-			});
-			
-			var columnIndex = $("#productList td:contains('상품정보')").index()+1;
-			//console.log("상품정보 인덱스 :: "+columnIndex);
-			
-			//품절여부에 따라서 링크 조절
-			var arr = $("tr.ct_list_pop").index($("tr.ct_list_pop:contains('품절')"));
-			
-			/*
-			$(arr).each(function(index, elem){
-				alert($(elem));
-				$(this).css("font-weight", "bold");
-			})
-			*/
-			
-			$("tr.ct_list_pop td:nth-child("+columnIndex+")").bind("click", function() {
-				
-				var index = $("tr.ct_list_pop td:nth-child("+columnIndex+")").index(this);
-				//console.log("클릭 Index :: "+index);
-				var prodNo = $($("input[name=prodNo]")[index]).val();
-				//console.log("상품번호 :: "+prodNo);
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
 
-				//이 페이지에 품절이 없을 때
-				if(arr<0) {
-					self.location = "/product/getProduct?prodNo="+prodNo+"&menu=${menu}";
-				} else {
-					var position = true;
-					$("tr.ct_list_pop:contains('품절')").each(function(idx){
-						//console.log("idx :: "+idx+"index :: "+(index-1));
-						//console.log("이값은?"+$("tr.ct_list_pop").index($($("tr.ct_list_pop:contains('품절')")[idx])));
-						if($("tr.ct_list_pop").index($($("tr.ct_list_pop:contains('품절')")[idx])) == index) {
-							position = false;
-							//console.log("position :: "+position);
-						}
-					})
-					if(position == true) {
-						console.log("prodNo:: "+prodNo+" / menu = ${menu}");
-						self.location = "/product/getProduct?prodNo="+prodNo+"&menu=${menu}";
+	$(function() {
+		
+		$("td.ct_btn01:contains('검색')").bind("click", function() {
+			fncGetList('','1');
+		});
+		
+		var columnIndex = $("#list td:contains('상품정보')").index()+1;
+		//console.log("상품정보 인덱스 :: "+columnIndex);
+		
+		//품절여부에 따라서 링크 조절
+		var arr = $("tr.ct_list_pop").index($("tr.ct_list_pop:contains('품절')"));
+		
+		/*
+		$(arr).each(function(index, elem){
+			alert($(elem));
+			$(this).css("font-weight", "bold");
+		})
+		*/
+		
+		$("tr.ct_list_pop td:nth-child("+columnIndex+")").bind("click", function() {
+			
+			var index = $("tr.ct_list_pop td:nth-child("+columnIndex+")").index(this);
+			//console.log("클릭 Index :: "+index);
+			var prodNo = $($("input[name=prodNo]")[index]).val();
+			//console.log("상품번호 :: "+prodNo);
+
+			//이 페이지에 품절이 없을 때
+			if(arr<0) {
+				self.location = "/product/getProduct?prodNo="+prodNo+"&menu=${menu}";
+			} else {
+				var position = true;
+				$("tr.ct_list_pop:contains('품절')").each(function(idx){
+					//console.log("idx :: "+idx+"index :: "+(index-1));
+					//console.log("이값은?"+$("tr.ct_list_pop").index($($("tr.ct_list_pop:contains('품절')")[idx])));
+					if($("tr.ct_list_pop").index($($("tr.ct_list_pop:contains('품절')")[idx])) == index) {
+						position = false;
+						//console.log("position :: "+position);
 					}
+				})
+				if(position == true) {
+					console.log("prodNo:: "+prodNo+" / menu = ${menu}");
+					self.location = "/product/getProduct?prodNo="+prodNo+"&menu=${menu}";
 				}
-
-			});
+			}
 
 		});
-	
-	</script>
+		
+		$("tr.ct_list_pop img").hover(function() {
+			$(this).addClass('bubble');
+		}, function() {
+			$(this).removeClass('bubble');
+		});
+		
+	});
+
+</script>
 </head>
 
 <body bgcolor="#ffffff" text="#000000">
@@ -129,7 +143,8 @@
 </table>
 
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;" id="productList">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;"
+	id="list">
 	<tr>
 		<td colspan="11" >
 		전체 ${resultPage.totalCount} 건수, 현재 ${resultPage.currentPage} 페이지</td>
@@ -220,7 +235,7 @@
 			<input type="hidden" id="currentPage" name="currentPage" value=""/>
 			<input type="hidden" id="priceOrderbyCode" name="priceOrderbyCode" value=""/>
 			
-			<jsp:include page="../common/pageNavigator.jsp"/>
+			<jsp:include page="../common/pageNavigator_product.jsp"/>
     	</td>
 	</tr>
 </table>

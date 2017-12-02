@@ -87,12 +87,18 @@ public class PurchaseController {
 	}
 	
 	@RequestMapping(value="getPurchase")
-	public String getPurchase(@RequestParam("tranNo") int tranNo,
+	public String getPurchase(@RequestParam(value="tranNo", required=false) Integer tranNo,
+							 @RequestParam(value="prodNo", required=false) Integer prodNo,
 							Model model) throws Exception {
 		
-		Purchase purchase = purchaseService.getPurchase(tranNo, "tranNo");
-
-		
+		Purchase purchase = null;
+		//System.out.println("tranNo :: "+tranNo);
+		if(tranNo != null) {
+			purchase = purchaseService.getPurchase(tranNo.intValue(), "tranNo");
+		} else {
+			//System.out.println("prodNo 으로 갔습니당");
+			purchase = purchaseService.getPurchase(prodNo.intValue(), "prodNo");
+		}
 		
 		model.addAttribute("purchase", purchase);
 		
@@ -107,10 +113,10 @@ public class PurchaseController {
 		//System.out.println(purchase.getDivyDate());
 		
 		// yyyy-mm-dd hh:mm:ss -> YYYYMMDD
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
 		Date date = dateFormat.parse(purchase.getDivyDate());
 		
-		System.out.println(date);
+		System.out.println(date+" :: "+(new SimpleDateFormat("YYYYMMDD")).format(date));
 		
 		purchase.setDivyDate((new SimpleDateFormat("YYYYMMDD")).format(date));
 		model.addAttribute("purchase", purchase);
@@ -165,7 +171,7 @@ public class PurchaseController {
 	}
 	
 	@RequestMapping(value="listSale")
-	public String listSale(@RequestParam("menu") String menu,
+	public String listSale(@RequestParam(value="menu", required=false) String menu,
 						@RequestParam(value="currentPage", defaultValue="1") int currentPage,
 						@RequestParam(value="searchCondition", required=false) String searchCondition,
 						@RequestParam(value="searchKeyword", required=false) String searchKeyword,
@@ -203,7 +209,7 @@ public class PurchaseController {
 		
 		int result = purchaseService.updateTranCode(purchase);
 		if(result == 1) {
-			return "forward:/purchase/listPurchase";
+			return "forward:/purchase/listSale?menu=manage";
 		} else {
 			return null;
 		}
@@ -222,7 +228,7 @@ public class PurchaseController {
 		
 		int result = purchaseService.updateTranCode(purchase);
 		if(result == 1) {
-			return "forward:/product/listProduct?menu=manage";
+			return "forward:/purchase/listSale?menu=manage";
 		} else {
 			return null;
 		}

@@ -17,11 +17,15 @@
 	$(function() {
 		
 		$("td.ct_btn01:contains('구매')").bind("click", function() {
-			$("form").attr("method", "POST"),attr("action", "/purchase/addPurchase");
+			$("form").attr("method", "POST").attr("action", "/purchase/addPurchase").submit();
 		})
 		
 		$( "td.ct_btn01:contains('취소')" ).on("click" , function() {
 			$("form")[0].reset();
+		});
+		
+		$( "td.ct_write01 img" ).on("click" , function() {
+			show_calendar('document.detailForm.manuDate',$('input[name=manuDate]').val());
 		});
 		
 	});
@@ -198,8 +202,7 @@
 		<td width="200" class="ct_write01">
 			<input 	type="text" readonly="readonly" name="divyDate" class="ct_input_g" 
 							style="width: 100px; height: 19px" maxLength="20"/>
-			<img 	src="../images/ct_icon_date.gif" width="15" height="15"	
-						onclick="show_calendar('document.addPurchase.divyDate', document.addPurchase.divyDate.value)"/>
+			<img 	src="../images/ct_icon_date.gif" width="15" height="15"	/>
 		</td>
 	</tr>
 	<tr>

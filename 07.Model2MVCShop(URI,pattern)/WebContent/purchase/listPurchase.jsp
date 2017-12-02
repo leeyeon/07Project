@@ -8,6 +8,35 @@
 <title>구매 목록조회</title>
 
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+
+	function fncGetList(currentPage) {
+		//alert();
+		$("#currentPage").val(currentPage);
+		$("form").attr("method" , "POST").attr("action" , "/purchase/listPurchase").submit();
+	}
+	
+	$(function() {
+		
+		var noIndex = $("#list td:contains('No')").index()+1;
+		var prodNameIndex = $("#list td:contains('상품명')").index()+1;
+		console.log(noIndex+" :: "+prodNameIndex);
+		
+		$("tr.ct_list_pop td:nth-child("+noIndex+")").bind("click", function(){
+			var index = ($("tr.ct_list_pop td:nth-child("+noIndex+")").index(this));
+			self.location="/purchase/getPurchase?tranNo="+$($("input:hidden[name='tranNo']")[index]).val();
+		});
+		
+		$("tr.ct_list_pop td:nth-child("+prodNameIndex+")").bind("click", function(){
+			//alert("dd");
+			var index = ($("tr.ct_list_pop td:nth-child("+prodNameIndex+")").index(this));
+			self.location="/product/getProduct?prodNo="+$($("input:hidden[name='prodNo']")[index]).val()+"&menu=${menu}";
+		});
+		
+	});
+	
+</script>
 
 </head>
 
@@ -15,7 +44,7 @@
 
 <div style="width: 98%; margin-left: 10px;">
 
-<form name="detailForm" action="/purchase/listPurchase" method="post">
+<form name="detailForm">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>
@@ -31,7 +60,8 @@
 	</tr>
 </table>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0"	style="margin-top: 10px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"	style="margin-top: 10px;"
+	id="list">
 	<tr>
 		<td colspan="11">
 		전체 ${resultPage.totalCount} 건수, 현재 ${resultPage.currentPage} 페이지</td>
@@ -54,18 +84,12 @@
 	</tr>
 	
 	<c:forEach var="purchase" items="${list}">
+	<input type="hidden" name="tranNo" value="${purchase.tranNo}"/>
+	<input type="hidden" name="prodNo" value="${purchase.purchaseProd.prodNo}"/>
 	<tr class="ct_list_pop">
-
-		<td align="center">
-			<a href="/purchase/getPurchase?tranNo=${purchase.tranNo}">
-			${list.indexOf(purchase) + 1}</a>
-		</td>
+		<td align="center">${list.indexOf(purchase) + 1}</td>
 		<td></td>
-		<td align="center">
-			<a href="/product/getProduct?prodNo=${purchase.purchaseProd.prodNo}&menu=${menu}">
-			${purchase.purchaseProd.prodName}
-		</a>
-		</td>
+		<td align="center">${purchase.purchaseProd.prodName}</td>
 		<td></td>
 		<td align="left"><fmt:formatNumber value="${purchase.price}" pattern="#,###"/>원 ( ${purchase.amount} )</td>
 		<td></td>
