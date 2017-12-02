@@ -25,13 +25,9 @@
 <!--
 // 검색 / page 두가지 경우 모두 Form 전송을 위해 JavaScrpt 이용 
 function fncGetList(priceOrderbyCode, currentPage) {
-	document.getElementById("priceOrderbyCode").value = priceOrderbyCode;
-	document.getElementById("currentPage").value = currentPage;
-   	document.detailForm.submit();
-}
-
-window.onload = function change() {
-    document.getElementById("pageTemp").style.fontWeight = "bold";
+	$("#currentPage").val(currentPage);
+	$("#priceOrderbyCode").val(priceOrderbyCode);
+	$("form").attr("method" , "POST").attr("action" , "/product/listProduct?menu=${menu}").submit();
 }
 //-->
 </script>

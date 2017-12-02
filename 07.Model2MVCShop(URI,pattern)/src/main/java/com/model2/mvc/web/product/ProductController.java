@@ -64,6 +64,7 @@ public class ProductController {
 		product.setManuDate(product.getManuDate().replaceAll("-", "").trim());
 		
 		//MultipartFile uploadFile = product.getUploadFile();
+		System.out.println("uploadFile :: "+product.getUploadFile());
 		if(uploadFile != null) {
 			String fileName = uploadFile.getOriginalFilename();
 			System.out.println("fileName :: " +fileName);

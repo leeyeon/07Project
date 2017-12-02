@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+
+	<resultMap id="productSelectMap"
+			   type="product" >
+		<result property="prodNo" column="prod_no" jdbcType="INTEGER"/>
+		<result property="prodName" column="prod_name" jdbcType="VARCHAR"/>
+		<result property="prodDetail" column="prod_detail" jdbcType="VARCHAR"/>
+		<result property="fileName" column="image_file" jdbcType="VARCHAR"/>
+		<result property="price" column="price" jdbcType="NUMERIC"/>
+		<result property="regDate" column="reg_date" jdbcType="DATE"/>
+		<result property="manuDate" column="manufacture_day" jdbcType="DATE"/>
+		<result property="amount" column="amount" jdbcType="NUMERIC"/>
+		<result property="inventory" column="amount" jdbcType="INTEGER"/>
+		<result property="beforeAmount" column="beforeamount" jdbcType="NUMERIC"/>
+		<result property="proTranCode" column="tran_status_code" jdbcType="CHAR"/>
+		<!-- VARCHAR OR NUMERIC -->
+	</resultMap>
+
+	<insert id="addProduct"
+			parameterType="product">
+		INSERT 
+		INTO PRODUCT
+		(prod_no, prod_name, prod_detail, manufacture_day, price, image_file,
+		amount, reg_date,status)
+		VALUES (seq_product_prod_no.nextval,
+				#{prodName},
+				#{prodDetail:VARCHAR},
+				#{manuDate:DATE},
+				#{price:NUMERIC},
+				#{fileName:VARCHAR},
+				#{amount:NUMERIC},
+				SYSDATE,
+				'0')
+	</insert>
+	
+	<!-- tranCode ... X 상품목록만 확인하기...
+	 	inventory 로 재고 확인해야함. 
+	 	status 로 판매중인거 아닌거 보여주기 -->
+	<select id="getProduct"
+			parameterType="string"
+			resultMap="productSelectMap">
+		SELECT
+		product.prod_no AS prod_no, prod_name, prod_detail, manufacture_day, price,
+		image_file, reg_date, product.amount AS amount,
+		product.amount - count(inventory.amount) AS inventory
+		FROM product, transaction, inventory
+		<where>
+			product.prod_no = transaction.prod_no(+)
+			AND transaction.tran_no = inventory.tran_no(+)
+			AND product.prod_no = #{value}
+		</where>
+		GROUP BY product.prod_no, prod_name, prod_detail, manufacture_day, price,
+		image_file, reg_date, product.amount
+	</select>
+	
+	<update id="updateProduct"
+			parameterType="product">
+		UPDATE PRODUCT
+		<set>
+			prod_name = #{prodName},
+			prod_detail = #{prodDetail:VARCHAR},
+			manufacture_day = #{manuDate:DATE},
+			amount = #{amount:NUMERIC},
+			price = #{price:NUMERIC}
+			<if test="ileName != null">
+				,image_file = #{fileName:NUMERIC}
+			</if>
+		</set>
+		<where>
+			prod_no = #{prodNo}
+		</where>
+	</update>
+	
+	<select id="getProductList"
+			parameterType="search"
+			resultMap="productSelectMap">
+		SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+				FROM	( <include refid="selectProductSql" /> ) inner_table
+				WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	</select>
+	
+	<select id="getTotalCount"
+			parameterType="search"
+			resultType="int">
+		SELECT COUNT(*)
+		FROM ( <include refid="selectProductSql" /> ) countTable
+	</select>
+	
+	<sql id="selectProductSql">
+		SELECT
+		DISTINCT
+		tran_status_code, product.prod_no AS prod_no, prod_name, prod_detail, 
+		manufacture_day, price, image_file, reg_date, product.amount - NVL(inventory.amount,0) AS amount
+		FROM product, transaction, inventory
+		<where>
+			product.prod_no = transaction.prod_no(+)
+			AND transaction.tran_no = inventory.tran_no(+)
+			<if test="searchCondition != null">
+				<if test="searchCondition == 0 and searchKeyword !='' ">
+	 				AND product.prod_no = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1 and searchKeyword !='' ">
+	 				AND prod_name LIKE '%${searchKeyword}%'
+				</if>
+				<if test="searchCondition == 2 and searchKeyword !='' ">
+	 				AND price = #{searchKeyword}
+				</if>
+			</if>
+		</where>
+		ORDER BY (  CASE WHEN ( product.amount - NVL(inventory.amount,0) ) = 0
+					THEN 2147483647 ELSE ( product.amount - NVL(inventory.amount,0) ) END )
+		<if test="searchOrderbyPrice != null">
+			<if test="searchOrderbyPrice == 0 and searchOrderbyPrice !='' ">
+				, price DESC, reg_date
+			</if>
+			<if test="searchOrderbyPrice == 1 and searchOrderbyPrice !='' ">
+				, price ASC, reg_date
+			</if>
+		</if>
+		<if test="searchOrderbyPrice == null or searchOrderbyPrice == ''">
+			, reg_date
+		</if>
+	</sql>
+	
+	<!-- 상품개수 변경... 차후에 변경 -->
+	<update id="updateAmount"
+			parameterType="java.util.Map">
+		UPDATE product
+		<set>
+			<if test="code == 0">
+				amount = amount - #{purchase.amount:INTEGER}
+			</if>
+			<if test="code == 1">
+				amount = amount + #{purchase.amount:INTEGER}
+			</if>
+		</set>
+		<where>
+			prod_no = #{purchase.prodNo}
+		</where>
+	</update>
+	 
+</mapper>

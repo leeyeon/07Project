@@ -9,55 +9,73 @@
 
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
 
-<script type="text/javascript" src="../javascript/calendar.js">
-</script>
-
+<script type="text/javascript" src="../javascript/calendar.js"></script>
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript">
-<!--
-function fncAddProduct(){
-	//Form 유효성 검증
- 	var name = document.detailForm.prodName.value;
-	var detail = document.detailForm.prodDetail.value;
-	var amount = document.detailForm.amount.value;
-	var manuDate = document.detailForm.manuDate.value;
-	var price = document.detailForm.price.value;
-	
-	if(name == null || name.length<1){
-		alert("상품명은 반드시 입력하여야 합니다.");
-		return;
-	}
-	if(detail == null || detail.length<1){
-		alert("상품상세정보는 반드시 입력하여야 합니다.");
-		return;
-	}
-	if(amount == null || amount.length<1){
-		alert("상품개수는 반드시 입력하셔야 합니다.");
-		return;
-	}
-	
-	if(manuDate == null || manuDate.length<1){
-		alert("제조일자는 반드시 입력하셔야 합니다.");
-		return;
-	}
-	if(price == null || price.length<1){
-		alert("가격은 반드시 입력하셔야 합니다.");
-		return;
-	}
-	
-	document.detailForm.action='/product/addProduct';
-	document.detailForm.submit();
-}
 
-function resetData(){
-	document.detailForm.reset();
-}
--->
+	function fncAddProduct(){
+		//Form 유효성 검증
+		
+	 	var name = $("input[name='prodName']").val();
+		var detail = $("input[name='prodDetail']").val();
+		var amount = $("input[name='amount']").val();
+		var manuDate = $("input[name='manuDate']").val();
+		var price = $("input[name='price']").val();
+		
+		if(name == null || name.length<1){
+			alert("상품명은 반드시 입력하여야 합니다.");
+			return;
+		}
+		if(detail == null || detail.length<1){
+			alert("상품상세정보는 반드시 입력하여야 합니다.");
+			return;
+		}
+		if(amount == null || amount.length<1){
+			alert("상품개수는 반드시 입력하셔야 합니다.");
+			return;
+		}
+		
+		if(manuDate == null || manuDate.length<1){
+			alert("제조일자는 반드시 입력하셔야 합니다.");
+			return;
+		}
+		if(price == null || price.length<1){
+			alert("가격은 반드시 입력하셔야 합니다.");
+			return;
+		}
+		
+		$("form").attr("method" , "POST").attr("action" , "/product/addProduct").submit();
+	}
+	
+	$(function() {
+
+		$( "td.ct_btn01:contains('등록')" ).on("click" , function() {
+			fncAddProduct();
+		});
+		
+		$( "td.ct_btn01:contains('취소')" ).on("click" , function() {
+			$("form")[0].reset();
+		});
+		
+		$( "td.ct_btn01:contains('확인')" ).on("click" , function() {
+			self.location="/product/listProduct?menu=manage";
+		});
+		
+		$( "td.ct_btn01:contains('추가등록')" ).on("click" , function() {
+			self.location="/product/addProduct";
+		});
+		
+		$( "td.ct_write01 img" ).on("click" , function() {
+			show_calendar('document.detailForm.manuDate',$('input[name=manuDate]').val());
+		});
+	});
+
 </script>
 </head>
 
 <body bgcolor="#ffffff" text="#000000">
 
-<form name="detailForm" method="POST" enctype="multipart/form-data">
+<form name="detailForm" enctype="multipart/form-data">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>
@@ -151,8 +169,7 @@ function resetData(){
 			<c:if test="${empty product}">
 				<input type="text" name="manuDate" readonly="readonly" class="ct_input_g"  
 						style="width: 100px; height: 19px"	maxLength="10" minLength="6"/>
-				&nbsp;<img src="../images/ct_icon_date.gif" width="15" height="15" 
-										onclick="show_calendar('document.detailForm.manuDate', document.detailForm.manuDate.value)"/>
+				&nbsp;<img src="../images/ct_icon_date.gif" width="15" height="15" />
 			</c:if>
 			<c:if test="${!empty product}">
 				${product.manuDate}
@@ -189,7 +206,7 @@ function resetData(){
 							style="width: 300px; height: 100px" maxLength="13"/>
 			</c:if>
 			<c:if test="${!empty product}">
-				${product.fileName}
+				<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"/>
 			</c:if>
 		</td>
 	</tr>
@@ -208,12 +225,8 @@ function resetData(){
 					<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
 				</td>
 				<td background="/images/ct_btnbg02.gif" class="ct_btn01"  style="padding-top: 3px;">
-					<c:if test="${empty product}">
-						<a href="javascript:fncAddProduct();">등록</a>
-					</c:if>
-					<c:if test="${!empty product}">
-						<a href="/product/listProduct?menu=manage">확인</a>
-					</c:if>
+					<c:if test="${empty product}">등록</c:if>
+					<c:if test="${!empty product}">확인</c:if>
 				</td>
 				<td width="14" height="23">
 					<img src="/images/ct_btnbg03.gif" width="14" height="23"/>
@@ -223,12 +236,8 @@ function resetData(){
 					<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
 				</td>
 				<td background="/images/ct_btnbg02.gif" class="ct_btn01"	 style="padding-top: 3px;">
-					<c:if test="${empty product}">
-						<a href="javascript:resetData();">취소</a>
-					</c:if>
-					<c:if test="${!empty product}">
-						<a href="/product/addProduct">추가등록</a>
-					</c:if>
+					<c:if test="${empty product}">취소</c:if>
+					<c:if test="${!empty product}">추가등록</c:if>
 				</td>
 				<td width="14" height="23">
 					<img src="/images/ct_btnbg03.gif" width="14" height="23"/>

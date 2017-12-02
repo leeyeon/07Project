@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CartMapper">
+	
+	<resultMap id="cartSelectMap"
+			   type="cart" >
+		<result property="cartNo" column="cart_no" jdbcType="INTEGER" />		
+		<result property="userId" column="user_id" jdbcType="VARCHAR"/>
+		<result property="prodNo" column="prod_no" jdbcType="INTEGER"/>
+		<result property="prodName" column="prod_name" jdbcType="VARCHAR"/>
+		<result property="cartDate" column="cart_date" jdbcType="DATE"/>
+		<result property="price" column="price" jdbcType="INTEGER"/>
+		<result property="status" column="status" jdbcType="CHAR"/>
+	</resultMap>
+
+	<insert id="addCart"
+			parameterType="cart">
+		INSERT
+		INTO cart
+		(cart_no, user_id, prod_no, cart_date, status)
+		VALUES
+		(seq_cart_cart_no.nextval, #{userId}, #{prodNo}, SYSDATE, '0')
+	</insert>
+	
+	<!-- 장바구니 있으면? check -->
+	<select id="checkCart"
+			parameterType="map"
+			resultType="int">
+		SELECT
+		count(*)
+		FROM cart
+		<where>
+			prod_no = ${prodNo}
+			AND user_id = #{userId}
+			AND status = 0
+		</where>
+	</select>
+	
+	<update id="updateCartStatus"
+			parameterType="int">
+		UPDATE cart
+		<set>
+			status = 1
+		</set>
+		<where>
+			cart_no = #{value}
+		</where>
+	</update>
+	
+	<select id="getCartList"
+			parameterType="map"
+			resultMap="cartSelectMap">
+		SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+				FROM	( <include refid="selectCartSql" /> ) inner_table
+				WHERE ROWNUM &lt;= #{search.endRowNum} )
+		WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum} 
+	</select>
+	
+	<select id="getTotalCount"
+			parameterType="map"
+			resultType="int">
+		SELECT COUNT(*)
+		FROM ( <include refid="selectCartSql" /> ) countTable
+	</select>
+	
+	<sql id="selectCartSql">
+		SELECT
+		cart_no, product.prod_no AS prod_no, prod_name, cart_date, price
+		FROM cart, product
+		<where>
+			product.prod_no = cart.prod_no
+			AND user_id = #{userId}
+			AND cart.status = 0
+		</where>
+	</sql>
+
+</mapper>

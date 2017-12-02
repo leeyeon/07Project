@@ -23,13 +23,12 @@
 		<context:include-filter 	type="annotation"		expression="org.springframework.stereotype.Controller" />
 		<context:exclude-filter 	type="annotation" 	expression="org.springframework.stereotype.Service"/>
 		<context:exclude-filter 	type="annotation" 	expression="org.springframework.stereotype.Repository"/>
-	</context:component-scan>
+	</context:component-scan> 
 	
 	<!-- rest controller wiring -->
 	<context:component-scan base-package="com.model2.mvc.rest">
 		<context:include-filter 	type="annotation"		expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
-	
 	
    	<!-- ■ DefaultAnnotationHandlerMapping 설정 등 기타 Annotation 기반
    	        모든 기능을 사용 할 수 있는 아래의 설정으로 변경 -->
@@ -70,10 +69,11 @@
 	<mvc:resources mapping="/css/**" location="/css/" />
    	<mvc:resources mapping="/images/**" location="/images/" />
    	<mvc:resources mapping="/javascript/**" location="/javascript/" />
+
  	<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
    	<!-- MultiPart... => fileUpload -->
    	<bean id="multipartResolver"
-   		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>  	
+   		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>  	   	
 
 	<!-- 	:: exception resolver  선언 :: 서술적 / 선언적 예외처리 
 			:: Servlet 에서의 선언적 예외처리를 다시 생각하며....  -->
@@ -90,5 +90,34 @@
 		<property name="defaultErrorView"	value="/common/error.jsp" />
 		
 	</bean>
+	
+
+	 <!-- /////// Client 에서 전달되는 JSON Data 를 Domain Object 롤 변환 받기위한 설정 ///////-->
+	<bean id="jsonConverter"	class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes" value="application/json" />
+	</bean>
+	
+	 <!-- /////// AnnotationMethodHandlerAdapter 에 jsonConverer  DI /////// -->
+	 <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jsonConverter" /> 
+			</list>
+		</property>	 
+	 </bean>
+
+
+	 <!-- /////// Client 로 전달되는 Domain Object  를 JSON Data  변환위한 설정            /////// -->
+	 <!-- Client  Response 받기원핟는 Content 타입을 선택,협상(Negotiation)하는 ViewResolver 설정 --> 
+	 <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+
+         <property name="defaultContentType" value="text/html"/>
+
+         <property name="defaultViews">
+             <list>
+                 <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+             </list>
+         </property>
+     </bean>
 	
 </beans>
