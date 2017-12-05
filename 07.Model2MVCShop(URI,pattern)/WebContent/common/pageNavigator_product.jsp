@@ -24,9 +24,9 @@
 <script type="text/javascript">
 <!--
 // 검색 / page 두가지 경우 모두 Form 전송을 위해 JavaScrpt 이용 
-function fncGetList(priceOrderbyCode, currentPage) {
+function fncGetList(searchOrderbyPrice, currentPage) {
 	$("#currentPage").val(currentPage);
-	$("#priceOrderbyCode").val(priceOrderbyCode);
+	$("#searchOrderbyPrice").val(searchOrderbyPrice);
 	$("form").attr("method" , "POST").attr("action" , "/product/listProduct?menu=${menu}").submit();
 }
 //-->

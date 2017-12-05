@@ -21,7 +21,8 @@
 		
 		var noIndex = $("#list td:contains('No')").index()+1;
 		var prodNameIndex = $("#list td:contains('상품명')").index()+1;
-		console.log(noIndex+" :: "+prodNameIndex);
+		var tranIndex = $("#list td:contains('정보수정')").index()+1;
+		//console.log(noIndex+" :: "+prodNameIndex);
 		
 		$("tr.ct_list_pop td:nth-child("+noIndex+")").bind("click", function(){
 			var index = ($("tr.ct_list_pop td:nth-child("+noIndex+")").index(this));
@@ -32,6 +33,13 @@
 			//alert("dd");
 			var index = ($("tr.ct_list_pop td:nth-child("+prodNameIndex+")").index(this));
 			self.location="/product/getProduct?prodNo="+$($("input:hidden[name='prodNo']")[index]).val()+"&menu=${menu}";
+		});
+		
+		$("td:contains('물건도착')").bind("click", function(){
+			var index = $("tr.ct_list_pop td:nth-child("+tranIndex+")").index(this);
+			var tranNo = $($("input[name=tranNo]")[index]).val();
+
+			self.location="/purchase/updateTranCode?tranNo="+tranNo+"&tranCode=3";
 		});
 		
 	});
@@ -121,7 +129,7 @@
 		<td align="left">
 		
 		<c:if test="${code eq 2 }">
-			<a href="/purchase/updateTranCode?tranNo=${purchase.tranNo}&tranCode=3">물건도착</a>
+			물건도착
 		</c:if>
 		</td>
 	</tr>

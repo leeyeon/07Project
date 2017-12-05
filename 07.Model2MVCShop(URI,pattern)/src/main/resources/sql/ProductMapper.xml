@@ -58,7 +58,7 @@
 		GROUP BY product.prod_no, prod_name, prod_detail, manufacture_day, price,
 		image_file, reg_date, product.amount
 	</select>
-	
+
 	<update id="updateProduct"
 			parameterType="product">
 		UPDATE PRODUCT
@@ -68,7 +68,7 @@
 			manufacture_day = #{manuDate:DATE},
 			amount = #{amount:NUMERIC},
 			price = #{price:NUMERIC}
-			<if test="ileName != null">
+			<if test="fileName != null">
 				,image_file = #{fileName:NUMERIC}
 			</if>
 		</set>

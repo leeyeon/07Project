@@ -140,26 +140,21 @@ public class PurchaseController {
 	@RequestMapping(value="listPurchase")
 	public String listPurchase(HttpSession session,
 							@RequestParam(value="menu", required=false) String menu,
-							@RequestParam(value="currentPage", defaultValue="1") int currentPage,
-							@RequestParam(value="searchCondition", required=false) String searchCondition,
-							@RequestParam(value="searchKeyword", required=false) String searchKeyword,
-							@RequestParam(value="priceOrderbyCode", required=false) String priceOrderbyCode,
 							@ModelAttribute("search") @Nullable Search search,
 							Model model)throws Exception {
 		
 		String buyerId = ((User)session.getAttribute("user")).getUserId();
 		System.out.println(buyerId);
 		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
 		search.setPageSize(pageSize);
-		search.setCurrentPage(currentPage);
-		search.setSearchCondition(searchCondition);
-		search.setSearchKeyword(searchKeyword);
-		search.setSearchOrderbyPrice(priceOrderbyCode);
 		
 		Map<String, Object> map = purchaseService.getPurchaseList(search, buyerId);
 		
 		Page resultPage	= 
-				new Page( currentPage, ((Integer)map.get("totalCount")).intValue(), 
+				new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), 
 				pageUnit, pageSize);
 		
 		model.addAttribute("list", map.get("list"));
@@ -172,23 +167,18 @@ public class PurchaseController {
 	
 	@RequestMapping(value="listSale")
 	public String listSale(@RequestParam(value="menu", required=false) String menu,
-						@RequestParam(value="currentPage", defaultValue="1") int currentPage,
-						@RequestParam(value="searchCondition", required=false) String searchCondition,
-						@RequestParam(value="searchKeyword", required=false) String searchKeyword,
-						@RequestParam(value="priceOrderbyCode", required=false) String priceOrderbyCode,
 						@ModelAttribute("search") @Nullable Search search,
 						Model model) throws Exception {
 		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
 		search.setPageSize(pageSize);
-		search.setCurrentPage(currentPage);
-		search.setSearchCondition(searchCondition);
-		search.setSearchKeyword(searchKeyword);
-		search.setSearchOrderbyPrice(priceOrderbyCode);
 		
 		Map<String, Object> map = purchaseService.getSaleList(search);
 		
 		Page resultPage	= 
-				new Page( currentPage, ((Integer)map.get("totalCount")).intValue(), 
+				new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), 
 				pageUnit, pageSize);
 		
 		model.addAttribute("list", map.get("list"));

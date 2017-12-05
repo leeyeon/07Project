@@ -40,7 +40,7 @@
 		});
 
 		$("td:contains('배송하기')").bind("click", function(){
-			var index = $("tr.ct_list_pop td:nth-child("+tranIndex+")").index(this)
+			var index = $("tr.ct_list_pop td:nth-child("+tranIndex+")").index(this);
 			var prodNo = $($("input[name=prodNo]")[index]).val();
 			//alert(prodNo+" :: index :: "+index);
 			self.location="/purchase/updateTranCodeByProd?prodNo="+prodNo+"&tranCode=2";

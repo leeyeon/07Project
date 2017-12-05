@@ -175,26 +175,20 @@ public class ProductController {
 	
 	@RequestMapping(value="listProduct")
 	public String listProduct(@RequestParam("menu") String menu,
-							@RequestParam(value="currentPage", defaultValue="1") int currentPage,
-							@RequestParam(value="searchCondition", required=false) String searchCondition,
-							@RequestParam(value="searchKeyword", required=false) String searchKeyword,
-							@RequestParam(value="priceOrderbyCode", required=false) String priceOrderbyCode,
 							@ModelAttribute("search") @Nullable Search search,
 							Model model) throws Exception  {
 		
-		System.out.println("menu :: " +menu);
-		System.out.println("가격정렬 Test :: "+priceOrderbyCode);
+		System.out.println("/product/listProduct");
 		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
 		search.setPageSize(pageSize);
-		search.setCurrentPage(currentPage);
-		search.setSearchCondition(searchCondition);
-		search.setSearchKeyword(searchKeyword);
-		search.setSearchOrderbyPrice(priceOrderbyCode);
 		
 		Map<String, Object> map = productService.getProductList(search);
 		
 		Page resultPage	= 
-				new Page( currentPage, ((Integer)map.get("totalCount")).intValue(), 
+				new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), 
 				pageUnit, pageSize);
 		
 		model.addAttribute("list", map.get("list"))

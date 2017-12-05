@@ -66,8 +66,11 @@
 		});
 		
 		$( "td.ct_write01 img" ).on("click" , function() {
+			//show_calendar($("#manuDate"),$('input[name=manuDate]').val());
 			show_calendar('document.detailForm.manuDate',$('input[name=manuDate]').val());
 		});
+		//$('#manuDate').css( "border", "3px solid red" );
+		//console.log($('#manuDate').get(0));
 	});
 
 </script>

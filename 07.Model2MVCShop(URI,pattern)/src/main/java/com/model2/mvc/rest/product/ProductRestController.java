@@ -1,6 +1,7 @@
 package com.model2.mvc.rest.product;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.model2.mvc.common.Page;
+import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.product.ProductService;
 
@@ -37,7 +40,7 @@ public class ProductRestController {
 	// @Value("#{commonProperties['pageSize'] ?: 2}")
 	int pageSize;
 	
-	@RequestMapping(value="json/addProduct")
+	@RequestMapping(value="json/addProduct", method=RequestMethod.POST)
 	public boolean addProduct(@RequestBody Product product) throws Exception {
 		
 		System.out.println("/product/addProduct : POST");
@@ -64,12 +67,64 @@ public class ProductRestController {
 		}
 	}
 	
-	@RequestMapping(value="json/getProduct/{prodNo}", method= {RequestMethod.GET})
+	@RequestMapping(value="json/getProduct/{prodNo}", method= RequestMethod.GET)
 	public Product getProduct(@PathVariable int prodNo) throws Exception {
 		
 		System.out.println("product/json/getProduct :: GET / POST");
 		
 		return productService.getProduct(prodNo);
 	}
+	
+	@RequestMapping(value="json/updateProduct", method= RequestMethod.POST)
+	public Product updateProduct(@RequestBody Product product) throws Exception {
+		
+		//System.out.println(product);
+		
+		product.setManuDate(product.getManuDate().replaceAll("-", "").trim());
+		
+		MultipartFile uploadFile = product.getUploadFile();
+		if(uploadFile != null) {
+			String fileName = uploadFile.getOriginalFilename();
+			System.out.println("fileName :: " +fileName);
+			product.setFileName(fileName);
+			
+			File file = new File(
+					"C:\\Users\\301-6\\git\\07Project\\07.Model2MVCShop(URI,pattern)\\WebContent\\images\\uploadFiles\\"+fileName);
+			uploadFile.transferTo(file);
+		}
+		
+		int result = productService.updateProduct(product);
+		
+		if(result == 1) {
+			return product;
+		} else {
+			return null;
+		}
+	}
 
+	@RequestMapping( value="json/listProduct", method=RequestMethod.POST )
+	public Map listProduct( @RequestBody Search search ) throws Exception {
+		
+		System.out.println("/user/json/listUser : GET");
+		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
+		search.setPageSize(pageSize);
+		
+		System.out.println(search);
+		
+		// Business logic ผ๖วเ
+		Map<String , Object> map = productService.getProductList(search);
+		
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		System.out.println(resultPage);
+		
+		Map<String , Object> result = new HashMap<String, Object>();
+		result.put("list", map.get("list"));
+		result.put("resultPage", resultPage);
+		result.put("search", search);
+		
+		return result;
+	}
 }

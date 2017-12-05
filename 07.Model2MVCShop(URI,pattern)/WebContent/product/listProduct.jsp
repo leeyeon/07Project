@@ -233,7 +233,7 @@
 	<tr>
 		<td align="center">
 			<input type="hidden" id="currentPage" name="currentPage" value=""/>
-			<input type="hidden" id="priceOrderbyCode" name="priceOrderbyCode" value=""/>
+			<input type="hidden" id="searchOrderbyPrice" name="searchOrderbyPrice" value=""/>
 			
 			<jsp:include page="../common/pageNavigator_product.jsp"/>
     	</td>
