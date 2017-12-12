@@ -60,13 +60,15 @@ public class UserRestController {
 		System.out.println("/user/json/login : POST");
 		//Business Logic
 		System.out.println("::"+user);
-		User dbUser=userService.getUser(user.getUserId());
+		User dbUser = userService.getUser(user.getUserId());
 		
-		if( user.getPassword().equals(dbUser.getPassword())){
+		if(dbUser != null && user.getPassword().equals(dbUser.getPassword())) {
 			session.setAttribute("user", dbUser);
+			return dbUser;
+		} else {
+			return null;
 		}
 		
-		return dbUser;
 	}
 	
 	@RequestMapping( value="json/addUser", method=RequestMethod.POST )

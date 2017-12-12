@@ -147,7 +147,9 @@ public class ProductController {
 		
 		// file upload
 		MultipartFile uploadFile = product.getUploadFile();
-		if(uploadFile != null) {
+		//System.out.println(uploadFile.getSize());
+		
+		if(uploadFile.getSize() > 0) {
 			String fileName = uploadFile.getOriginalFilename();
 			System.out.println("fileName :: " +fileName);
 			product.setFileName(fileName);
@@ -155,6 +157,8 @@ public class ProductController {
 			File file = new File(
 					"C:\\Users\\301-6\\git\\07Project\\07.Model2MVCShop(URI,pattern)\\WebContent\\images\\uploadFiles\\"+fileName);
 			uploadFile.transferTo(file);
+		} else {
+			//System.out.println("file 안 올렸을 땐 원래 있던 사진 load...");
 		}
 		
 		int result = productService.updateProduct(product);

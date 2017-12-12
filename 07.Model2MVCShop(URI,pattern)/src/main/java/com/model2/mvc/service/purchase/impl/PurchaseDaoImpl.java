@@ -89,7 +89,6 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	
 	@Override
 	public int updateTranCode(Purchase purchase) throws Exception {
-		// TODO Auto-generated method stub
 		return sqlSession.update("PurchaseMapper.updateTranCode", purchase);
 	}
 

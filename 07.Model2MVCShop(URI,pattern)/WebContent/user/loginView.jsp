@@ -1,192 +1,159 @@
 <%@ page contentType="text/html; charset=EUC-KR" %>
 <%@ page pageEncoding="EUC-KR"%>
 
-<!DOCTYPE html>
-<html>
 
+<!DOCTYPE html>
+
+<html lang="ko">
+	
 <head>
 	<meta charset="EUC-KR">
 	
-	<title>로그인 화면</title>
+	<!-- 참조 : http://getbootstrap.com/css/   참조 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	
-	<link rel="stylesheet" href="/css/admin.css" type="text/css">
+	<!--  ///////////////////////// Bootstrap, jQuery CDN ////////////////////////// -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
 	
-	<!-- CDN(Content Delivery Network) 호스트 사용 -->
-	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<!--  ///////////////////////// CSS ////////////////////////// -->
+	<style>
+    	 body >  div.container{ 
+        	border: 3px solid #D6CDB7;
+            margin-top: 10px;
+        }
+    </style>
+    
+    <!--  ///////////////////////// JavaScript ////////////////////////// -->
 	<script type="text/javascript">
-	   
-		/*=============jQuery 변경 주석처리 =============
-		function fncLogin() {
-			var id=document.loginForm.userId.value;
-			var pw=document.loginForm.password.value;
-			
-			if(id == null || id.length <1) {
-				alert('ID 를 입력하지 않으셨습니다.');
-				document.loginForm.userId.focus();
-				return;
-			}
-			
-			if(pw == null || pw.length <1) {
-				alert('패스워드를 입력하지 않으셨습니다.');
-				document.loginForm.password.focus();
-				return;
-			}
-		}
-		
-		//Call Back Method 이용 onload 시 Event 처리
-		window.onload = function(){
-			document.getElementById("userId").focus();
-		}========================================	*/
+
+		//============= "로그인"  Event 연결 =============
 		$( function() {
 			
-			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
 			$("#userId").focus();
 			
-			//==> 추가된부분 : "Login"  Event 연결
-			$("img[src='/images/btn_login.gif']").on("click" , function() {
-
+			$("input").bind("keydown", function(e) {
+				if(e.keyCode == 13) {
+					login();
+				}
+			})
+			
+			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+			$("button").on("click" , function() {
 				var id=$("input:text").val();
 				var pw=$("input:password").val();
 				
 				if(id == null || id.length <1) {
 					alert('ID 를 입력하지 않으셨습니다.');
-					$("input:text").focus();
+					$("#userId").focus();
 					return;
 				}
 				
 				if(pw == null || pw.length <1) {
 					alert('패스워드를 입력하지 않으셨습니다.');
-					$("input:password").focus();
+					$("#password").focus();
 					return;
 				}
 				
-				//$("form").attr("method" , "POST");
-				//$("form").attr("action" , "/login.do");
-				//$("form").attr("target" , "_parent");
-			    //$("form").submit();
-				//==> 위의 4실행문과 같은의미			    
 				$("form").attr("method","POST").attr("action","/user/login").attr("target","_parent").submit();
-				
 			});
-		});
+		});	
 		
 		
-		//*=============jQuery 추가된부부분 : 회원원가입화면이동 =============
+		//============= 회원원가입화면이동 =============
 		$( function() {
-			//==> 추가된부분 : "addUser"  Event 연결
-			$("img[src='/images/btn_add.gif']").on("click" , function() {
+			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+			$("a[href='#' ]").on("click" , function() {
 				self.location = "/user/addUser"
 			});
+			
+			$(".col-sm-offset-3.col-sm-7.text-center img").on({
+				"click": function() {
+				self.location = "https://kauth.kakao.com/oauth/authorize?client_id=90d9379d1246c1e7e36d34027d2e497d"
+					+"&redirect_uri=http://127.0.0.1:8080/kakaoLogin&response_type=code";
+				},
+				"mouseover": function() {
+					$(this).attr("src", "../images/kakao_account_login_btn_medium_narrow_ov.png");
+					$(this).css("cursor", "pointer");
+				},
+				"mouseout": function() {
+					$(this).attr("src", "../images/kakao_account_login_btn_medium_narrow.png");
+				}
+			});
+			
+			
 		});
 		
 	</script>		
 	
 </head>
 
-<body bgcolor="#ffffff" text="#000000" >
+<body>
 
-<!-- ////////////////// jQuery Event 처리로 변경됨 /////////////////////////
- <form name="loginForm"  method="post" action="/user/login" target="_parent">
-////////////////////////////////////////////////////////////////////////////////////////////////// -->
-<form>
+	<!-- ToolBar Start /////////////////////////////////////-->
+	<div class="navbar  navbar-default">
+        <div class="container">
+        	<a class="navbar-brand" href="/index.jsp">Model2 MVC Shop</a>
+   		</div>
+   	</div>
+   	<!-- ToolBar End /////////////////////////////////////-->	
+	
+	<!--  화면구성 div Start /////////////////////////////////////-->
+	<div class="container">
+		<!--  row Start /////////////////////////////////////-->
+		<div class="row">
+		
+			<div class="col-md-6">
+					<img src="/images/logo-spring.png" class="img-rounded" width="100%" />
+			</div>
+	   	 	
+	 	 	<div class="col-md-6">
+	 	 	
+		 	 	<br/><br/>
+				
+				<div class="jumbotron">	 	 	
+		 	 		<h1 class="text-center">로 &nbsp;&nbsp;그 &nbsp;&nbsp;인</h1>
 
-<div align="center" >
-
-<TABLE WITH="100%" HEIGHT="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
-<TR>
-<TD ALIGN="CENTER" VALIGN="MIDDLE">
-
-<table width="650" height="390" border="5" cellpadding="0" cellspacing="0" bordercolor="#D6CDB7">
-  <tr> 
-    <td width="10" height="5" align="left" valign="top" bordercolor="#D6CDB7">
-    	<table width="650" height="390" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-          <td width="305">
-            <img src="/images/logo-spring.png" width="305" height="390"/>
-          </td>
-          <td width="345" align="left" valign="top" background="/images/login02.gif">
-          	<table width="100%" height="220" border="0" cellpadding="0" cellspacing="0">
-              <tr> 
-                <td width="30" height="100">&nbsp;</td>
-                <td width="100" height="100">&nbsp;</td>
-                <td height="100">&nbsp;</td>
-                <td width="20" height="100">&nbsp;</td>
-              </tr>
-              <tr> 
-                <td width="30" height="50">&nbsp;</td>
-                <td width="100" height="50">
-                	<img src="/images/text_login.gif" width="91" height="32"/>
-                </td>
-                <td height="50">&nbsp;</td>
-                <td width="20" height="50">&nbsp;</td>
-              </tr>
-              <tr> 
-                <td width="200" height="50" colspan="4"></td>
-              </tr>              
-              <tr> 
-                <td width="30" height="30">&nbsp;</td>
-                <td width="100" height="30">
-                	<img src="/images/text_id.gif" width="100" height="30"/>
-                </td>
-                <td height="30">
-                  <input 	type="text" name="userId"  id="userId"  class="ct_input_g" 
-                  				style="width:180px; height:19px"  maxLength='50'/>          
-          		</td>
-                <td width="20" height="30">&nbsp;</td>
-              </tr>
-              <tr> 
-                <td width="30" height="30">&nbsp;</td>
-                <td width="100" height="30">
-                	<img src="/images/text_pas.gif" width="100" height="30"/>
-                </td>
-                <td height="30">                    
-                    <input 	type="password" name="password" class="ct_input_g" 
-                    				style="width:180px; height:19px"  maxLength="50" />
-                </td>
-                <td width="20" height="30">&nbsp;</td>
-              </tr>
-              <tr> 
-                <td width="30" height="20">&nbsp;</td>
-                <td width="100" height="20">&nbsp;</td>
-                <td height="20" align="center">
-   				    <table width="136" height="20" border="0" cellpadding="0" cellspacing="0">
-                       <tr> 
-                         <td width="56">
-                         	<!-- ////////////////// jQuery Event 처리로 변경됨 /////////////////////////
-							<a href="javascript:fncLogin();">
-                         		<img src="/images/btn_login.gif" width="56" height="20" border="0"/>
-                         	</a>
-							////////////////////////////////////////////////////////////////////////////////////////////////// -->
-                         		<img src="/images/btn_login.gif" width="56" height="20" border="0"/>
-                         </td>
-                         <td width="10">&nbsp;</td>
-                         <td width="70">
-                         	<!-- ////////////////// jQuery Event 처리로 변경됨 /////////////////////////
-							<a href="/user/addUser">
-                         		<img src="/images/btn_add.gif" width="70" height="20" border="0">
-                         	</a>
-							////////////////////////////////////////////////////////////////////////////////////////////////// -->
-                       			<img src="/images/btn_add.gif" width="70" height="20" border="0">
-                         </td>
-                       </tr>
-                     </table>
-                 </td>
-                 <td width="20" height="20">&nbsp;</td>
-                </tr>
-              </table>
-            </td>
-      	</tr>                            
-      </table>
-      </td>
-  </tr>
-</table>
-</TD>
-</TR>
-</TABLE>
-
-</div>
-
-</form>
+			        <form class="form-horizontal" style="padding-bottom: 50px">
+		  
+					  <div class="form-group">
+					    <label for="userId" class="col-sm-4 control-label">아 이 디</label>
+					    <div class="col-sm-6">
+					      <input type="text" class="form-control" name="userId" id="userId"  placeholder="아이디" >
+					    </div>
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="password" class="col-sm-4 control-label">패 스 워 드</label>
+					    <div class="col-sm-6">
+					      <input type="password" class="form-control" name="password" id="password" placeholder="패스워드" >
+					    </div>
+					  </div>
+					  
+					  <div class="form-group">
+					    <div class="col-sm-offset-3 col-sm-7 text-center">
+					      <button type="button" class="btn btn-primary"  >로 &nbsp;그 &nbsp;인</button>
+					      <a class="btn btn-primary btn" href="#" role="button">회 &nbsp;원 &nbsp;가 &nbsp;입</a>
+					    </div>
+					  </div>
+					  
+					  <div class="col-sm-offset-3 col-sm-7 text-center" style="padding-top: 5px">
+							<img src="../images/kakao_account_login_btn_medium_narrow.png">
+					  </div>
+					  
+					</form>		  
+			
+				</div>
+			
+			</div>
+			
+  	 	</div>
+  	 	<!--  row Start /////////////////////////////////////-->
+  	 	
+ 	</div>
+ 	<!--  화면구성 div end /////////////////////////////////////-->
 
 </body>
 

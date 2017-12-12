@@ -20,9 +20,20 @@ public class User {
 	private String phone1;
 	private String phone2;
 	private String phone3;
+	
+	private String accessToken;
+	private String refreshToken;
+	private String snsType;
+	private String profileImage;
+	
+	public String getSnsType() {
+		return snsType;
+	}
 
-	
-	
+	public void setSnsType(String snsType) {
+		this.snsType = snsType;
+	}
+
 	///Constructor
 	public User(){
 	}
@@ -99,9 +110,35 @@ public class User {
 		return phone3;
 	}
 
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+
+	public String getProfileImage() {
+		return profileImage;
+	}
+
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+	}
+
 	@Override
 	public String toString() {
-		return "UserVO : [userId] "+userId+" [userName] "+userName+" [password] "+password+" [role] "+ role
-			+" [ssn] "+ssn+" [phone] "+phone+" [email] "+email+" [regDate] "+regDate;
+		return "User [userId=" + userId + ", userName=" + userName + ", password=" + password + ", role=" + role
+				+ ", ssn=" + ssn + ", phone=" + phone + ", addr=" + addr + ", email=" + email + ", regDate=" + regDate
+				+ ", phone1=" + phone1 + ", phone2=" + phone2 + ", phone3=" + phone3 + ", accessToken=" + accessToken
+				+ ", refreshToken=" + refreshToken + ", snsType=" + snsType + ", profileImage=" + profileImage + "]";
 	}
 }

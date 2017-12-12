@@ -2,8 +2,12 @@ package com.model2.mvc.rest.product;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +109,7 @@ public class ProductRestController {
 	@RequestMapping( value="json/listProduct", method=RequestMethod.POST )
 	public Map listProduct( @RequestBody Search search ) throws Exception {
 		
-		System.out.println("/user/json/listUser : GET");
+		System.out.println("/product/json/listProduct : POST");
 		
 		if(search.getCurrentPage() ==0 ){
 			search.setCurrentPage(1);
@@ -126,5 +130,18 @@ public class ProductRestController {
 		result.put("search", search);
 		
 		return result;
+	}
+	
+	@RequestMapping( value="json/listProductName", method=RequestMethod.POST )
+	public List<String> lisProductName ( @RequestParam("prodName") String prodName) throws Exception {
+		
+		System.out.println("listProductName :: "+prodName);
+		
+		JSONArray array = new JSONArray();
+		JSONObject obj = null;
+		
+		List<String> list = productService.getProductNameList(prodName);
+		
+		return list;
 	}
 }

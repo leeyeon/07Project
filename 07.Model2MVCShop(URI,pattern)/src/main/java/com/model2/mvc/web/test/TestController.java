@@ -59,4 +59,5 @@ public class TestController {
 		
 		return "forward:/test/multiFileUploadResult.jsp";		
 	}
+
 }

@@ -1,61 +1,161 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page contentType="text/html; charset=EUC-KR" %>
+<%@ page pageEncoding="EUC-KR"%>
+<!DOCTYPE html>
+<!--  ///////////////////////// JSTL  ////////////////////////// -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<html>
+<html lang="ko">
+	
 <head>
-<title>상품 목록 조회</title>
+	<meta charset="EUC-KR">
+	
+	<!-- 참조 : http://getbootstrap.com/css/   참조 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	
+	<!--  ///////////////////////// Bootstrap, jQuery CDN ////////////////////////// -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+	
+	
+	<!-- Bootstrap Dropdown Hover CSS -->
+   <link href="/css/animate.min.css" rel="stylesheet">
+   <link href="/css/bootstrap-dropdownhover.min.css" rel="stylesheet">
+    <!-- Bootstrap Dropdown Hover JS -->
+   <script src="/javascript/bootstrap-dropdownhover.min.js"></script>
+   
+   
+   <!-- jQuery UI toolTip 사용 CSS-->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- jQuery UI toolTip 사용 JS-->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
+	<!--  ///////////////////////// CSS ////////////////////////// -->
+	<style>
+		body {
+			padding-top : 50px;
+		}
+		.bubble {
+		    transform: scale(1);
+		    width: 120%;
+		    height: 120%;
+		    transition: all 2s;
+		}
+   </style>
 
-<link rel="stylesheet" href="/css/admin.css" type="text/css">
-<style>
-.bubble {
-    transform: scale(1);
-    width: 120%;
-    height: 120%;
-    transition: all 2s;
-}
-</style>
-
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript">
+
+	function fncGetList(searchOrderbyPrice, currentPage) {
+		$("#currentPage").val(currentPage);
+		$("#searchOrderbyPrice").val(searchOrderbyPrice);
+		$("form").attr("method" , "POST").attr("action" , "/product/listProduct?menu=${menu}").submit();
+	}
 
 	$(function() {
 		
-		$("td.ct_btn01:contains('검색')").bind("click", function() {
+		// 검색했을 때 tooltip		
+		$(":text[name='searchKeyword']").on("keydown", function(e) {
+			
+			if(e.keyCode == 13) {
+				fncGetList('','1');
+			} else {
+				
+				$(this).autocomplete({
+					source: function(request, response) {
+					$.ajax({
+						url : "/product/json/listProductName",
+						method : "POST",
+						data : {
+							prodName : request.term
+						},
+						dataType : "json",
+						success : function(serverData) {
+							response(serverData);
+						}
+					});
+					},
+					minLength : 2
+				});
+			}
+		});
+
+		// 무한 Scroll
+		$(window).on("scroll", function() {
+			if($(window).scrollTop() == ($(document).height() - $(window).height())) {
+				dataLoading();
+			}
+		})
+		
+		var pageInfo = 1;
+		
+		function dataLoading() {
+			pageInfo ++;
+			//alert("pageInfo :: "+pageInfo);
+			$.ajax({
+				url : "/product/json/listProduct",
+				method : "POST",
+				contentType : "application/json; charset=UTF-8",
+				data : JSON.stringify({
+					currentPage : pageInfo
+				}),
+				dataType : "json",
+				success : function(serverData) {
+					//alert("ajax dataLoading Success...");
+
+					var idx = 4*(pageInfo-1);
+					
+					$(serverData.list).each(function(index,data) {
+						console.log(data.price);
+						//alert(index);
+						var html = '<tr><td align="center">'+(idx+index)+'</td><c:if test="${!empty user && user.role.trim() eq \'admin\'}">'
+						+'<td align="center">'+data.prodNo+'</td></c:if>'
+						+'<td align="left"><input type="hidden" value="'+data.prodNo+'" name="prodNo"/>'
+						+'<img src = "/images/uploadFiles/'+data.fileName+'" onerror="this.src=\'/images/no_image.jpg\'" height="90px" width="100px" border="0" align="absmiddle" style="padding: 5px"/>'
+						+'&nbsp;'+data.prodName+'</td><td align="right">'+data.price+' 원</td><td align="center">'
+						+((data.amount==0)? "품절": data.amount+'&nbsp;개')+'</td><td align="center">'+data.regDate+'</td>';
+						
+						$("#list").append(html);
+					})
+					
+				},
+				error:function(request,status,error){
+				    alert("code:"+request.status+"\n"+
+				    		"message:"+request.responseText+
+				    		 "\n"+"error:"+error);
+				   }
+			});
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////
+		
+		$("button.btn.btn-default").bind("click", function() {
 			fncGetList('','1');
 		});
 		
-		var columnIndex = $("#list td:contains('상품정보')").index()+1;
-		//console.log("상품정보 인덱스 :: "+columnIndex);
+		var columnIndex = $("#list th:contains('상품정보')").index()+1;
 		
 		//품절여부에 따라서 링크 조절
-		var arr = $("tr.ct_list_pop").index($("tr.ct_list_pop:contains('품절')"));
+		var arr = $("tbody td").index($("tbody td:contains('품절')"));
 		
-		/*
-		$(arr).each(function(index, elem){
-			alert($(elem));
-			$(this).css("font-weight", "bold");
-		})
-		*/
-		
-		$("tr.ct_list_pop td:nth-child("+columnIndex+")").bind("click", function() {
-			
-			var index = $("tr.ct_list_pop td:nth-child("+columnIndex+")").index(this);
-			//console.log("클릭 Index :: "+index);
+		$("tbody td:nth-child("+columnIndex+")").on("click", function() {
+
+			//console.log(columnIndex);
+			var index = $("tbody td:nth-child("+columnIndex+")").index(this);
+			console.log("클릭 Index :: "+index);
 			var prodNo = $($("input[name=prodNo]")[index]).val();
-			//console.log("상품번호 :: "+prodNo);
+			console.log("상품번호 :: "+prodNo);
 
 			//이 페이지에 품절이 없을 때
 			if(arr<0) {
 				self.location = "/product/getProduct?prodNo="+prodNo+"&menu=${menu}";
 			} else {
 				var position = true;
-				$("tr.ct_list_pop:contains('품절')").each(function(idx){
+				$("tbody td:contains('품절')").each(function(idx){
 					//console.log("idx :: "+idx+"index :: "+(index-1));
 					//console.log("이값은?"+$("tr.ct_list_pop").index($($("tr.ct_list_pop:contains('품절')")[idx])));
-					if($("tr.ct_list_pop").index($($("tr.ct_list_pop:contains('품절')")[idx])) == index) {
+					if($("tbody td").index($($("tbody td:contains('품절')")[idx])) == index) {
 						position = false;
 						//console.log("position :: "+position);
 					}
@@ -68,7 +168,7 @@
 
 		});
 		
-		$("tr.ct_list_pop img").hover(function() {
+		$("tbody td img").hover(function() {
 			$(this).addClass('bubble');
 		}, function() {
 			$(this).removeClass('bubble');
@@ -79,169 +179,112 @@
 </script>
 </head>
 
-<body bgcolor="#ffffff" text="#000000">
+<body>
 
-<div style="width:98%; margin-left:10px;">
+	<jsp:include page="/layout/toolbar.jsp" />
 
-<form name="detailForm">
-
-<table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
-	<tr>
-		<td width="15" height="37">
-			<img src="/images/ct_ttl_img01.gif" width="15" height="37"/>
-		</td>
-		<td background="/images/ct_ttl_img02.gif" width="100%" style="padding-left:10px;">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="93%" class="ct_ttl01">
-					<c:choose>
-						<c:when test="${!empty menu && menu eq 'search'}">
-						 	상품 목록
-						</c:when>
-						<c:otherwise>
-							판매 상품 관리
-						</c:otherwise>
-					</c:choose>
-					</td>
-				</tr>
-			</table>
-		</td>
-		<td width="12" height="37">
-			<img src="/images/ct_ttl_img03.gif" width="12" height="37"/>
-		</td>
-	</tr>
-</table>
-
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;">
-	<tr>
-		<td align="right">
-			<select name="searchCondition" class="ct_input_g" style="width:80px">
-				<!-- <option value="0" ${(!empty search && search.searchCondition eq '0')? "selected" : ""}>상품번호</option>  -->		
-				<option value="1" ${(!empty search && search.searchCondition eq '1')? "selected" : ""}>상품명</option>
-				<option value="2" ${(!empty search && search.searchCondition eq '2')? "selected" : ""}>상품가격</option>
-			</select>
-			<input type="text" name="searchKeyword" value="${search.searchKeyword}"
-					 class="ct_input_g" style="width:200px; height:19px" />
-		</td>		
-		<td align="right" width="70">
-			<table border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="17" height="23">
-						<img src="/images/ct_btnbg01.gif" width="17" height="23">
-					</td>
-					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top:3px;">
-						검색
-					</td>
-					<td width="14" height="23">
-						<img src="/images/ct_btnbg03.gif" width="14" height="23">
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
-
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;"
-	id="list">
-	<tr>
-		<td colspan="11" >
-		전체 ${resultPage.totalCount} 건수, 현재 ${resultPage.currentPage} 페이지</td>
-	</tr>
-	<tr>
-		<td colspan="11" align="right">
-		<a href="">상품명순</a>&nbsp;&nbsp;
-		<a href="">재고순</a>&nbsp;&nbsp;
-		<a href="">상품등록일순</a>
-		</td>
-	</tr>
-	<tr><td>&nbsp;</td></tr>
-	<tr>
-		<td colspan="11" bgcolor="808285" height="1"></td>
-	</tr>
-	<tr>
-		<td class="ct_list_b" width="100">No</td>
-		<td class="ct_line02"></td>
-		
-		<c:if test="${!empty user && user.role.trim() eq 'admin'}">
-		<td class="ct_list_b" width="120">상품번호</td>
-		<td class="ct_line02"></td>
-		</c:if>
-		
-		<td class="ct_list_b" width="450">상품정보</td>
-		<td class="ct_line02"></td>		
-		<td class="ct_list_b" width="120">가격
-			<c:choose>
-				<c:when test="${search.searchOrderbyPrice eq '0'}">
-					<a href="javascript:fncGetList('1','1');">▼</a>
-				</c:when>
-				<c:when test="${search.searchOrderbyPrice eq '1'}">
-					<a href="javascript:fncGetList('0','1');">▲</a>
+	<div class="container">
+	
+		<div class="page-header text-info">
+	       <h3 class="text-info">
+	       <c:choose>
+				<c:when test="${!empty menu && menu eq 'search'}">
+				 	상품 목록
 				</c:when>
 				<c:otherwise>
-					<a href="javascript:fncGetList('1',${resultPage.currentPage});">◇</a>
+					판매 상품 관리
 				</c:otherwise>
 			</c:choose>
-		</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b" width="100">상품개수</td>	
-		<td class="ct_line02"></td>
-		<td class="ct_list_b">상품등록일</td>
-	</tr>
-	<tr>
-		<td colspan="11" bgcolor="808285" height="1"></td>
-	</tr>
-
-	<c:forEach var="product" items="${list}">
-		
-		<tr class="ct_list_pop">
-			<td align="center">${list.indexOf(product) + 1}</td>
-			<td></td>
-			<c:if test="${!empty user && user.role.trim() eq 'admin'}">
-			<td align="center">${product.prodNo}</td>
-			<td></td>
-			</c:if>
-			<td align="left">
-			<input type="hidden" value="${product.prodNo}" name="prodNo"/>
-				<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
-				height="90px" width="100px" border="0" align="absmiddle"
-				style="padding: 5px"/>&nbsp;
-				${product.prodName}
-			</td>
-			<td></td>
-			<td align="right"><fmt:formatNumber value="${product.price}" pattern="#,###"/> 원</td>
-			<td></td>
-			<td align="center">
-				<c:if test="${product.amount == 0}">
-					품절
-				</c:if>	
-				<c:if test="${product.amount != 0}">
-					${product.amount}&nbsp;개
-				</c:if>
-			</td>
-			<td></td>
-			<td align="center">${product.regDate}</td>
-			<td></td>
-		<tr>
-			<td colspan="11" bgcolor="D6D7D6" height="1"></td>
-		</tr>
-	</c:forEach>
-</table>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;">
-	<tr>
-		<td align="center">
-			<input type="hidden" id="currentPage" name="currentPage" value=""/>
-			<input type="hidden" id="searchOrderbyPrice" name="searchOrderbyPrice" value=""/>
-			
-			<jsp:include page="../common/pageNavigator_product.jsp"/>
-    	</td>
-	</tr>
-</table>
-<!--  페이지 Navigator 끝 -->
-
-</form>
+	       </h3>
+	    </div>
+	    
+	    <div class="row">
+	    	<div class="col-md-6 text-left">
+		    	<p class="text-primary">
+		    		전체 ${resultPage.totalCount} 건수, 추가 상품은 스크롤스크롤~
+		    	</p>
+		    </div>
+		    <div class="col-md-6 text-right">
+			    <form class="form-inline" name="detailForm">
+			    
+				  <div class="form-group">
+				    <select class="form-control" name="searchCondition" >
+						<option value="1" ${(!empty search && search.searchCondition eq '1')? "selected" : ""}>상품명</option>
+						<option value="2" ${(!empty search && search.searchCondition eq '2')? "selected" : ""}>상품가격</option>
+					</select>
+				  </div>
+				  
+				  <div class="form-group">
+				    <label class="sr-only" for="searchKeyword">검색어</label>
+				    <input type="text" class="form-control" id="searchKeyword" name="searchKeyword"  placeholder="검색어"
+				    			 value="${! empty search.searchKeyword ? search.searchKeyword : '' }"  >
+				  </div>
+				  
+				  <button type="button" class="btn btn-default">검색</button>
+				  
+				  <!-- PageNavigation 선택 페이지 값을 보내는 부분 -->
+				  <input type="hidden" id="currentPage" name="currentPage" value=""/>
+				  
+				</form>
+	    	</div>
+    	</div>
+    	
+    	<table class="table table-hover table-striped" id="list">
+	    	<thead>
+	          <tr>
+	            <th align="center">No</th>
+	            <c:if test="${!empty user && user.role.trim() eq 'admin'}">
+	            	<th align="center">상품번호</th>
+	            </c:if>
+	            <th align="center">상품정보</th>
+	            <th align="center">가격
+		        <c:choose>
+					<c:when test="${search.searchOrderbyPrice eq '0'}">
+						<a href="javascript:fncGetList('1','1');">▼</a>
+					</c:when>
+					<c:when test="${search.searchOrderbyPrice eq '1'}">
+						<a href="javascript:fncGetList('0','1');">▲</a>
+					</c:when>
+					<c:otherwise>
+						<a href="javascript:fncGetList('1',${resultPage.currentPage});">◇</a>
+					</c:otherwise>
+				</c:choose>
+				</th>
+	            <th align="center">상품개수</th>
+	            <th align="center">상품등록일</th>
+	          </tr>
+	        </thead>
+	        
+	        <tbody>
+	        	<c:forEach var="product" items="${list}">
+	        		<tr>
+	        			<td align="center">${list.indexOf(product) + 1}</td>
+	        			<c:if test="${!empty user && user.role.trim() eq 'admin'}">
+						<td align="center">${product.prodNo}
+						</td>
+						</c:if>
+						<td align="left">
+						<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
+						height="90px" width="100px" border="0" align="absmiddle"
+						style="padding: 5px"/>&nbsp;
+						${product.prodName}
+						<input type="hidden" value="${product.prodNo}" name="prodNo"/>
+						</td>
+						<td align="right"><fmt:formatNumber value="${product.price}" pattern="#,###"/> 원</td>
+	        			<td align="center">
+						<c:if test="${product.amount == 0}">
+							품절
+						</c:if>	
+						<c:if test="${product.amount != 0}">
+							${product.amount}&nbsp;개
+						</c:if>
+						</td>
+						<td align="center">${product.regDate}</td>
+	        		</tr>
+	        	</c:forEach>
+	        </tbody>
+    	
+    	</table>
 
 </div>
 </body>

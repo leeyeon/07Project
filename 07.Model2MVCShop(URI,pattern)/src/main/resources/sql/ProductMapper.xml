@@ -98,7 +98,7 @@
 		SELECT
 		DISTINCT
 		tran_status_code, product.prod_no AS prod_no, prod_name, prod_detail, 
-		manufacture_day, price, image_file, reg_date, product.amount - NVL(inventory.amount,0) AS amount
+		manufacture_day, price, image_file, reg_date, product.amount - count(NVL(inventory.amount,0)) AS amount
 		FROM product, transaction, inventory
 		<where>
 			product.prod_no = transaction.prod_no(+)
@@ -115,8 +115,10 @@
 				</if>
 			</if>
 		</where>
-		ORDER BY (  CASE WHEN ( product.amount - NVL(inventory.amount,0) ) = 0
-					THEN 2147483647 ELSE ( product.amount - NVL(inventory.amount,0) ) END )
+		GROUP BY tran_status_code, product.prod_no, prod_name, prod_detail, 
+					manufacture_day, price, image_file, reg_date, product.amount
+		ORDER BY (  CASE WHEN ( product.amount - count(NVL(inventory.amount,0)) ) = 0
+					THEN 2147483647 ELSE (product.amount - count(NVL(inventory.amount,0)) ) END )
 		<if test="searchOrderbyPrice != null">
 			<if test="searchOrderbyPrice == 0 and searchOrderbyPrice !='' ">
 				, price DESC, reg_date
@@ -146,5 +148,15 @@
 			prod_no = #{purchase.prodNo}
 		</where>
 	</update>
+	
+	<!-- Search ... Product Name? -->
+	<select id="getProductNameList"
+			parameterType="string"
+			resultType="string">
+		SELECT prod_name
+		FROM product
+		WHERE prod_name LIKE '%${value}%'
+		ORDER BY prod_name
+	</select>
 	 
 </mapper>

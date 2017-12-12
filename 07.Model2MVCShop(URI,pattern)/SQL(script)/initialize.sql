@@ -28,6 +28,10 @@ CREATE TABLE users (
 	PRIMARY KEY(user_id)
 );
 
+//alter table users add(sns_id VARCHAR2(50));
+//alter table users add(sns_type VARCHAR2(20));
+alter table users add(profile_image VARCHAR2(200));
+
 
 CREATE TABLE product ( 
 	prod_no 						NUMBER 				NOT NULL,

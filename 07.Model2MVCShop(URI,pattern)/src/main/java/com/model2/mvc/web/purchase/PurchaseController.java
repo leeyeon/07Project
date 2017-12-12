@@ -114,11 +114,13 @@ public class PurchaseController {
 		
 		// yyyy-mm-dd hh:mm:ss -> YYYYMMDD
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
-		Date date = dateFormat.parse(purchase.getDivyDate());
-		
-		System.out.println(date+" :: "+(new SimpleDateFormat("YYYYMMDD")).format(date));
-		
-		purchase.setDivyDate((new SimpleDateFormat("YYYYMMDD")).format(date));
+		if(purchase.getDivyDate() != null) {
+			Date date = dateFormat.parse(purchase.getDivyDate());
+			
+			System.out.println(date+" :: "+(new SimpleDateFormat("YYYYMMDD")).format(date));
+			
+			purchase.setDivyDate((new SimpleDateFormat("YYYYMMDD")).format(date));
+		}
 		model.addAttribute("purchase", purchase);
 		
 		return "forward:/purchase/updatePurchase.jsp";
@@ -205,7 +207,7 @@ public class PurchaseController {
 		}
 	}
 	
-	@RequestMapping(value="updateTranCodeByProd")
+	//@RequestMapping(value="updateTranCodeByProd")
 	public String updateTranCodeByProd(@RequestParam("prodNo") int prodNo,
 									@RequestParam("tranCode") String tranCode) throws Exception {
 		

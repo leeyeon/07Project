@@ -115,12 +115,7 @@
 			tran_status_code = #{tranCode:CHAR}
 		</set>
 		<where>
-			<if test="tranCode == 3">
-				tran_no = #{tranNo}
-			</if>
-			<if test="tranCode != 3">
-				prod_no = #{purchaseProd.prodNo}
-			</if>
+			tran_no = #{tranNo}
 		</where>
 	</update>
 	

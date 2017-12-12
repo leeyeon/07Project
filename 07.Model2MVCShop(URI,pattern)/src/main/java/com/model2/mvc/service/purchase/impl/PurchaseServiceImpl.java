@@ -97,7 +97,11 @@ public class PurchaseServiceImpl implements PurchaseService {
 	@Override
 	public int updateTranCode(Purchase purchase) throws Exception {
 
-		return purchaseDao.updateTranCode(purchase);
+		int result = purchaseDao.updateTranCode(purchase);
+		
+		System.out.println(result);
+		
+		return result;
 	}
 
 	@Override

@@ -17,7 +17,8 @@ public class ProductDaoImpl implements ProductDao {
 	@Autowired
 	@Qualifier("sqlSessionTemplate")
 	private SqlSession sqlSession;
-	
+
+
 	public ProductDaoImpl() {
 		// TODO Auto-generated constructor stub
 	}
@@ -55,6 +56,10 @@ public class ProductDaoImpl implements ProductDao {
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("ProductMapper.getTotalCount", search);
 	}
-
+	
+	@Override
+	public List<String> getProductNameList(String prodName) throws Exception {
+		return sqlSession.selectList("ProductMapper.getProductNameList", prodName);
+	}
 
 }

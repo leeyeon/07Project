@@ -17,20 +17,30 @@
 		<result property="addr" 				column="addr" 					jdbcType="VARCHAR" />
 		<result property="email" 			column="email" 				jdbcType="NUMERIC"  />
 		<result property="regDate" 		column="reg_date" 			jdbcType="DATE" />
+		<result property="snsType" 	column="sns_type" 	jdbcType="VARCHAR" />
+		<result property="profileImage" 	column="profile_image" 	jdbcType="VARCHAR" />
 	</resultMap>
 	
 	<!-- SQL : INSERT -->
 	<insert 	id="addUser"		parameterType="user" >
 	 	INSERT
-		INTO users( user_id , user_name , password , role , ssn, cell_phone, addr, email , reg_date) 
-		VALUES	 (	#{userId} , #{userName} , #{password} , 'user' , #{ssn:VARCHAR} , 
-							#{phone:VARCHAR} , #{addr:VARCHAR} , #{email:VARCHAR} , SYSDATE )
+		INTO users( user_id , user_name , password , role , ssn, cell_phone, addr, email , reg_date,
+					sns_type , profile_image ) 
+		VALUES	 (	#{userId} , #{userName}
+		
+		<if test="snsType != null">
+			, #{userId}
+		</if>
+		
+		 , 'user' , #{ssn:VARCHAR} , 
+					#{phone:VARCHAR} , #{addr:VARCHAR} , #{email:VARCHAR} , SYSDATE,
+					#{snsType:VARCHAR} , #{profileImage:VARCHAR} )
 	 </insert>
 	 
 	 <!-- SQL : SELECT ONE -->
 	 <select 	id="getUser"	parameterType="string"	resultMap="userSelectMap">
 		SELECT
-		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date 		
+		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date , profile_image
 		FROM users 
 		WHERE user_id = #{value}
 	 </select>
@@ -51,7 +61,7 @@
 	<select  id="getUserList"  parameterType="search"	resultMap="userSelectMap">
 	  	SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
-	  					FROM		(	SELECT user_id , user_name , email
+	  					FROM		(	SELECT user_id , user_name , email, role, reg_date
 											FROM users
 											<if test="searchCondition != null">
 												<where>
