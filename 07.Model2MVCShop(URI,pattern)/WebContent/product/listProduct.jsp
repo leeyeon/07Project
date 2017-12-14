@@ -32,16 +32,13 @@
   <!-- jQuery UI toolTip 사용 JS-->
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	
+	<!-- image hover -->
+	<link rel="stylesheet" href="../css/image_hover.css" >
+	
 	<!--  ///////////////////////// CSS ////////////////////////// -->
 	<style>
 		body {
 			padding-top : 50px;
-		}
-		.bubble {
-		    transform: scale(1);
-		    width: 120%;
-		    height: 120%;
-		    transition: all 2s;
 		}
    </style>
 
@@ -55,7 +52,9 @@
 
 	$(function() {
 		
-		// 검색했을 때 tooltip		
+		$("#loader").hide();
+		
+		// 검색했을 때 tooltip	
 		$(":text[name='searchKeyword']").on("keydown", function(e) {
 			
 			if(e.keyCode == 13) {
@@ -81,18 +80,27 @@
 			}
 		});
 
+		
+		var pageInfo = 1;
+		var prod_index = ${search.pageSize};
+		var totalCount = ${resultPage.totalCount};
+		var pageSize = ${search.pageSize};
+
 		// 무한 Scroll
 		$(window).on("scroll", function() {
 			if($(window).scrollTop() == ($(document).height() - $(window).height())) {
-				dataLoading();
+				if(totalCount >= (pageInfo*pageSize)) {
+					dataLoading();
+				}
 			}
-		})
-		
-		var pageInfo = 1;
+		});
 		
 		function dataLoading() {
+			
+			$("#loader").show();
+			
 			pageInfo ++;
-			//alert("pageInfo :: "+pageInfo);
+
 			$.ajax({
 				url : "/product/json/listProduct",
 				method : "POST",
@@ -102,18 +110,14 @@
 				}),
 				dataType : "json",
 				success : function(serverData) {
-					//alert("ajax dataLoading Success...");
-
-					var idx = 4*(pageInfo-1);
-					
 					$(serverData.list).each(function(index,data) {
-						console.log(data.price);
-						//alert(index);
-						var html = '<tr><td align="center">'+(idx+index)+'</td><c:if test="${!empty user && user.role.trim() eq \'admin\'}">'
+						
+						var html = '<tr><td align="center">'+(++prod_index)+'</td><c:if test="${!empty user && user.role.trim() eq \'admin\'}">'
 						+'<td align="center">'+data.prodNo+'</td></c:if>'
 						+'<td align="left"><input type="hidden" value="'+data.prodNo+'" name="prodNo"/>'
-						+'<img src = "/images/uploadFiles/'+data.fileName+'" onerror="this.src=\'/images/no_image.jpg\'" height="90px" width="100px" border="0" align="absmiddle" style="padding: 5px"/>'
-						+'&nbsp;'+data.prodName+'</td><td align="right">'+data.price+' 원</td><td align="center">'
+						+'<figure class="snip1384" style="cursor: pointer;"><img src = "/images/uploadFiles/'+data.fileName+'" onerror="this.src=\'/images/no_image.jpg\'" alt="sample83"/>'
+						+'<figcaption><h3>'+data.prodName+'</h3><p>'+data.prodDetail+'</p><i class="ion-ios-arrow-right"></i></figcaption></figure>'+data.prodName
+						+'</td><td align="right">'+data.price+' 원</td><td align="center">'
 						+((data.amount==0)? "품절": data.amount+'&nbsp;개')+'</td><td align="center">'+data.regDate+'</td>';
 						
 						$("#list").append(html);
@@ -121,11 +125,11 @@
 					
 				},
 				error:function(request,status,error){
-				    alert("code:"+request.status+"\n"+
-				    		"message:"+request.responseText+
-				    		 "\n"+"error:"+error);
+				    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 				   }
 			});
+			
+			$("#loader").hide();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +143,7 @@
 		//품절여부에 따라서 링크 조절
 		var arr = $("tbody td").index($("tbody td:contains('품절')"));
 		
-		$("tbody td:nth-child("+columnIndex+")").on("click", function() {
+		$(document).on("click","tbody td:nth-child("+columnIndex+")", function() {
 
 			//console.log(columnIndex);
 			var index = $("tbody td:nth-child("+columnIndex+")").index(this);
@@ -168,12 +172,6 @@
 
 		});
 		
-		$("tbody td img").hover(function() {
-			$(this).addClass('bubble');
-		}, function() {
-			$(this).removeClass('bubble');
-		});
-		
 	});
 
 </script>
@@ -183,7 +181,7 @@
 
 	<jsp:include page="/layout/toolbar.jsp" />
 
-	<div class="container">
+	<div class="container" style="padding-bottom: 100px;">
 	
 		<div class="page-header text-info">
 	       <h3 class="text-info">
@@ -229,6 +227,9 @@
 	    	</div>
     	</div>
     	
+
+
+    	
     	<table class="table table-hover table-striped" id="list">
 	    	<thead>
 	          <tr>
@@ -263,11 +264,14 @@
 						<td align="center">${product.prodNo}
 						</td>
 						</c:if>
-						<td align="left">
-						<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
-						height="90px" width="100px" border="0" align="absmiddle"
-						style="padding: 5px"/>&nbsp;
-						${product.prodName}
+						<td align="center">
+							<figure class="snip1384" style="cursor: pointer;">
+							  <img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'" alt="sample83" />
+							  <figcaption >
+							    <h3>${product.prodName}</h3>
+							    <p>${product.prodDetail}</p><i class="ion-ios-arrow-right"></i>
+							  </figcaption>
+							</figure>${product.prodName}
 						<input type="hidden" value="${product.prodNo}" name="prodNo"/>
 						</td>
 						<td align="right"><fmt:formatNumber value="${product.price}" pattern="#,###"/> 원</td>
@@ -283,9 +287,12 @@
 	        		</tr>
 	        	</c:forEach>
 	        </tbody>
-    	
     	</table>
+    	
+    	<div id="loader" class="text-center">
+			<img src = "/images/ajax-loader.gif"/>
+		</div>
 
-</div>
+	</div>
 </body>
 </html>

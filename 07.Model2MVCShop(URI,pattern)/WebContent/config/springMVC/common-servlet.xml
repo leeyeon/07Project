@@ -55,7 +55,21 @@
 	<!--  :: ViewResolver 선언 -->	
     <bean id="viewResolver"
 				class="org.springframework.web.servlet.view.InternalResourceViewResolver" />
+				
+	<!--  :: Naver Bean 선언 -->
+	<bean id="naver" class="com.model2.mvc.common.Naver" />
+	<bean id="kakao" class="com.model2.mvc.common.Kakao" />
+	<bean id="google" class="com.model2.mvc.common.Google" />
 	
+	<!-- google Class Bean설정 추가 -->
+	<!-- 클라이언트ID와 보안비밀 세팅-->
+	<bean id="googleConnectionFactory"
+		class="org.springframework.social.google.connect.GoogleConnectionFactory">
+		<constructor-arg value="53828513767-euud6p6ljlmddag1odu5j48mufms1gcr.apps.googleusercontent.com" />
+		<constructor-arg value="hytvs3HK7nWaMe0bHqlp8jct" />
+	</bean>
+	<!-- 승인된 자바스크립트 원본과 승인된 리디렉션 URI -->
+	<bean id="googleOAuth2Parameters" class="org.springframework.social.oauth2.OAuth2Parameters" />
 	
 	<!--	
 		■ / 형식의 Mapping 은 모든(정적,동적 자원) 요청시 처리책임

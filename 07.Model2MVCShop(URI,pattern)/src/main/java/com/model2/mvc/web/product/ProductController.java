@@ -200,6 +200,8 @@ public class ProductController {
 			 .addAttribute("search", search)
 			 .addAttribute("menu", menu);
 		
+		System.out.println(resultPage);
+		
 		return "forward:/product/listProduct.jsp";
 	}
 	

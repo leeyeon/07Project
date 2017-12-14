@@ -76,7 +76,7 @@
 		
         <div class="container">
         
-        	<a class="navbar-brand" href="#">Model2 MVC Shop</a>
+        	<a class="navbar-brand" href="#">Yeonhee's Shop</a>
 			
 			<!-- toolBar Button Start //////////////////////// -->
 			<div class="navbar-header">

@@ -31,7 +31,9 @@
 		<if test="snsType != null">
 			, #{userId}
 		</if>
-		
+		<if test="snsType == null">
+			, #{password}
+		</if>
 		 , 'user' , #{ssn:VARCHAR} , 
 					#{phone:VARCHAR} , #{addr:VARCHAR} , #{email:VARCHAR} , SYSDATE,
 					#{snsType:VARCHAR} , #{profileImage:VARCHAR} )
@@ -40,7 +42,7 @@
 	 <!-- SQL : SELECT ONE -->
 	 <select 	id="getUser"	parameterType="string"	resultMap="userSelectMap">
 		SELECT
-		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date , profile_image
+		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date , profile_image, sns_type
 		FROM users 
 		WHERE user_id = #{value}
 	 </select>
@@ -61,7 +63,7 @@
 	<select  id="getUserList"  parameterType="search"	resultMap="userSelectMap">
 	  	SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
-	  					FROM		(	SELECT user_id , user_name , email, role, reg_date
+	  					FROM		(	SELECT user_id , user_name , email, role, reg_date, sns_type
 											FROM users
 											<if test="searchCondition != null">
 												<where>

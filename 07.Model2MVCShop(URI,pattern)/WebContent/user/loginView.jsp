@@ -11,12 +11,14 @@
 	
 	<!-- 참조 : http://getbootstrap.com/css/   참조 -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="google-signin-client_id" content="53828513767-euud6p6ljlmddag1odu5j48mufms1gcr.apps.googleusercontent.com">
 	
 	<!--  ///////////////////////// Bootstrap, jQuery CDN ////////////////////////// -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+	<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 	
 	<!--  ///////////////////////// CSS ////////////////////////// -->
 	<style>
@@ -69,22 +71,53 @@
 				self.location = "/user/addUser"
 			});
 			
-			$(".col-sm-offset-3.col-sm-7.text-center img").on({
+			/* 카카오 로그인 연동 */
+			
+			$("#kakaoLogin").on({
 				"click": function() {
-				self.location = "https://kauth.kakao.com/oauth/authorize?client_id=90d9379d1246c1e7e36d34027d2e497d"
-					+"&redirect_uri=http://127.0.0.1:8080/kakaoLogin&response_type=code";
+					//self.location = "/kakaoLoginRequest";
+					window.open('/kakaoLoginRequest', 'kakaoPopup', 'width=300, height=400, scrollbars= 0, toolbar=0, menubar=no');
 				},
 				"mouseover": function() {
-					$(this).attr("src", "../images/kakao_account_login_btn_medium_narrow_ov.png");
+					$(this).attr("src", "../images/api/kakao_account_login_btn_medium_narrow_ov.png");
 					$(this).css("cursor", "pointer");
 				},
 				"mouseout": function() {
-					$(this).attr("src", "../images/kakao_account_login_btn_medium_narrow.png");
+					$(this).attr("src", "../images/api/kakao_account_login_btn_medium_narrow.png");
 				}
 			});
 			
+			/* 네이버 로그인 연동 */
+			
+			$("#naverLogin").on({
+				"click": function() {
+					//self.location = "/naverLoginRequest";
+					window.open('/naverLoginRequest', 'naverPopup', 'width=300, height=400, scrollbars= 0, toolbar=0, menubar=no');
+				},
+				"mouseover": function() {
+					$(this).css("cursor", "pointer");
+				}
+			});
+			
+			/* 구글 로그인 연동 */
+			
+			$("#googleLogin").on({
+				"click": function() {
+					self.location = "/googleLoginRequest";
+					//window.open('/naverLoginRequest', 'naverPopup', 'width=300, height=400, scrollbars= 0, toolbar=0, menubar=no');
+				},
+				"mouseover": function() {
+					$(this).attr("src", "../images/api/google_account_dark_pressed.png");
+					$(this).css("cursor", "pointer");
+				},
+				"mouseout": function() {
+					$(this).attr("src", "../images/api/google_account_darkl_web.png");
+				}
+			});
 			
 		});
+		
+		
 		
 	</script>		
 	
@@ -95,7 +128,7 @@
 	<!-- ToolBar Start /////////////////////////////////////-->
 	<div class="navbar  navbar-default">
         <div class="container">
-        	<a class="navbar-brand" href="/index.jsp">Model2 MVC Shop</a>
+        	<a class="navbar-brand" href="/index.jsp">Yeonhee's Shop</a>
    		</div>
    	</div>
    	<!-- ToolBar End /////////////////////////////////////-->	
@@ -116,18 +149,18 @@
 				<div class="jumbotron">	 	 	
 		 	 		<h1 class="text-center">로 &nbsp;&nbsp;그 &nbsp;&nbsp;인</h1>
 
-			        <form class="form-horizontal" style="padding-bottom: 50px">
+			        <form class="form-horizontal" style="padding-bottom: 150px">
 		  
 					  <div class="form-group">
-					    <label for="userId" class="col-sm-4 control-label">아 이 디</label>
-					    <div class="col-sm-6">
+					    <label for="userId" class="col-sm-3 control-label">아이디</label>
+					    <div class="col-sm-7">
 					      <input type="text" class="form-control" name="userId" id="userId"  placeholder="아이디" >
 					    </div>
 					  </div>
 					  
 					  <div class="form-group">
-					    <label for="password" class="col-sm-4 control-label">패 스 워 드</label>
-					    <div class="col-sm-6">
+					    <label for="password" class="col-sm-3 control-label">비밀번호</label>
+					    <div class="col-sm-7">
 					      <input type="password" class="form-control" name="password" id="password" placeholder="패스워드" >
 					    </div>
 					  </div>
@@ -139,8 +172,19 @@
 					    </div>
 					  </div>
 					  
-					  <div class="col-sm-offset-3 col-sm-7 text-center" style="padding-top: 5px">
-							<img src="../images/kakao_account_login_btn_medium_narrow.png">
+					  <div class="col-sm-offset-3 col-sm-7 text-center" style="padding-top: 5px" >
+							<img id="kakaoLogin"
+								src="../images/api/kakao_account_login_btn_medium_narrow.png" width="222px" height="49px">
+					  </div>
+					  
+					  <div class="col-sm-offset-3 col-sm-7 text-center" style="padding-top: 5px" >
+							<img id="naverLogin" 
+							src="../images/api/naver_account_login.png" width="222px" >
+					  </div>
+					  
+					  <div class="col-sm-offset-3 col-sm-7 text-center" style="padding-top: 2px; padding-left: 11px" >
+							<img id="googleLogin" 
+							src="../images/api/google_account_darkl_web.png" width="230px" >
 					  </div>
 					  
 					</form>		  

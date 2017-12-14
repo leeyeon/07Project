@@ -35,12 +35,6 @@
 		body {
 			padding-top : 50px;
 		}
-		.bubble {
-		    transform: scale(1);
-		    width: 120%;
-		    height: 120%;
-		    transition: all 2s;
-		}
    </style>
    
 <script type="text/javascript">
@@ -79,126 +73,98 @@
 			self.location="/purchase/updateTranCode?tranNo="+tranNo+"&tranCode=2";
 		});
 		
+		$( "button.btn.btn-default" ).on("click" , function() {
+			fncGetList(1);
+		});
+		
 	});
+	
+	function fncGetList(currentPage) {
+		$("#currentPage").val(currentPage);
+		$("form").attr("method" , "POST").attr("action" , "/purchase/listSale").submit();
+	}
 
 </script>
 </head>
 
-<body bgcolor="#ffffff" text="#000000">
+<body>
 
-<div style="width:98%; margin-left:10px;">
+	<jsp:include page="/layout/toolbar.jsp" />
+	
+	<div class="container">
+	
+		<div class="page-header text-info">
+	       <h3 class="text-info">
+	       		상품 배송 관리
+	       </h3>
+	    </div>
+	    
+	    <div class="row">
+	    	<div class="col-md-6 text-left">
+		    	<p class="text-primary">
+		    		전체 ${resultPage.totalCount} 건수, 현재 ${resultPage.currentPage} 페이지
+		    	</p>
+		    </div>
+	    </div>
+	    
+	    <table class="table table-hover table-striped" id="list">
+	    	<thead>
+	    	  <tr>
+	    		<th align="center">No</th>
+	            <c:if test="${!empty user && user.role.trim() eq 'admin'}">
+	            	<th align="center">상품번호</th>
+	            </c:if>
+	            <th align="center">상품정보</th>
+	            <th align="center">가격</th>
+	            <th align="center">상품개수</th>
+	            <th align="center">구매자아이디</th>
+	            <th align="center">현재상태</th>
+	          </tr>
+	    	</thead>
+	    	
+	    	<tbody>
+	    		<c:forEach var="purchase" items="${list}">
+				<input type="hidden" name="tranNo" value="${purchase.tranNo}"/>
+				<c:set var="product" value="${purchase.purchaseProd}"/>
+	    			<tr>
+	        			<td align="center">${list.indexOf(purchase) + 1}</td>
+	        			<c:if test="${!empty user && user.role.trim() eq 'admin'}">
+						<td align="center">${product.prodNo}
+						</td>
+						</c:if>
+						<td align="center">
+							<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
+								height="90px" width="100px" border="0" align="absmiddle"
+								style="padding: 5px"/>&nbsp;
+								${product.prodName}
+						<input type="hidden" value="${product.prodNo}" name="prodNo"/>
+						</td>
+						<td align="right"><fmt:formatNumber value="${product.price}" pattern="#,###"/> 원</td>
+	        			<td align="center">
+							${purchase.amount}&nbsp;개
+						</td>
+						<td align="center">${purchase.buyer.userId}</td>
+						<td align="center">
+							<c:choose>
+								<c:when test="${purchase.tranCode.trim() eq '1'}">구매완료</c:when>
+								<c:when test="${purchase.tranCode.trim() eq '2'}">배송중</c:when>
+							<c:otherwise>배송완료</c:otherwise>
+							
+							</c:choose>
+							<c:if test="${purchase.tranCode.trim() eq '1'}">
+								배송하기
+							</c:if>
+						</td>
+	        		</tr>
+	    		</c:forEach>
+	    	</tbody>	    	
+	    </table>
+	    
+	    
+	    <jsp:include page="../common/pageNavigator_new.jsp"/>
+	    
+	</div>
 
-<form name="detailForm">
-
-<table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
-	<tr>
-		<td width="15" height="37">
-			<img src="/images/ct_ttl_img01.gif" width="15" height="37"/>
-		</td>
-		<td background="/images/ct_ttl_img02.gif" width="100%" style="padding-left:10px;">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="93%" class="ct_ttl01">
-					상품 배송 관리
-					</td>
-				</tr>
-			</table>
-		</td>
-		<td width="12" height="37">
-			<img src="/images/ct_ttl_img03.gif" width="12" height="37"/>
-		</td>
-	</tr>
-</table>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;"
-id="list">
-	<tr>
-		<td colspan="13" >
-		전체 ${resultPage.totalCount} 건수, 현재 ${resultPage.currentPage} 페이지</td>
-	</tr>
-	<tr>
-		<td colspan="13" bgcolor="808285" height="1"></td>
-	</tr>
-	<tr>
-		<td class="ct_list_b" width="70">No</td>
-		<td class="ct_line02"></td>
 		
-		<c:if test="${!empty user && user.role.trim() eq 'admin'}">
-		<td class="ct_list_b" width="120">상품번호</td>
-		<td class="ct_line02"></td>
-		</c:if>
-		<td class="ct_list_b" width="450">상품정보</td>
-		<td class="ct_line02"></td>		
-		<td class="ct_list_b" width="120">가격</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b" width="100">상품개수</td>	
-		<td class="ct_line02"></td>
-		<td class="ct_list_b" width="150">구매자아이디</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b">현재상태</td>	
-	</tr>
-	<tr>
-		<td colspan="13" bgcolor="808285" height="1"></td>
-	</tr>
-
-	<c:forEach var="purchase" items="${list}">
-	<input type="hidden" name="tranNo" value="${purchase.tranNo}"/>
-	<c:set var="product" value="${purchase.purchaseProd}"/>
-		<tr class="ct_list_pop">
-			<td align="center">${list.indexOf(purchase) + 1}</td>
-			<td></td>
-			<c:if test="${!empty user && user.role.trim() eq 'admin'}">
-			<td align="center">${product.prodNo}</td>
-			<td></td>
-			</c:if>
-			<td align="left">
-				<img src = "/images/uploadFiles/${product.fileName}" onerror="this.src='/images/no_image.jpg'"
-				height="90px" width="100px" border="0" align="absmiddle"
-				style="padding: 5px"/>&nbsp;
-				${product.prodName}
-			</td>
-			<td></td>
-			<td align="right"><fmt:formatNumber value="${product.price}" pattern="#,###"/> 원</td>
-			<td></td>
-			<td align="center">
-				${purchase.amount}&nbsp;개
-			</td>
-			<td></td>
-			<td align="center">${purchase.buyer.userId}</td>
-			<td></td>
-			<td align="left">
-
-			<c:choose>
-				<c:when test="${purchase.tranCode.trim() eq '1'}">구매완료</c:when>
-				<c:when test="${purchase.tranCode.trim() eq '2'}">배송중</c:when>
-			<c:otherwise>배송완료</c:otherwise>
-			
-			</c:choose>
-			<c:if test="${purchase.tranCode.trim() eq '1'}">
-				배송하기
-			</c:if>
-			
-			</td>
-		</tr>
-		<tr>
-			<td colspan="13" bgcolor="D6D7D6" height="1"></td>
-		</tr>
-	</c:forEach>
-</table>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:10px;">
-	<tr>
-		<td align="center">
-			<input type="hidden" id="currentPage" name="currentPage" value=""/>
-			
-			<jsp:include page="../common/pageNavigator.jsp"/>
-    	</td>
-	</tr>
-</table>
-<!--  페이지 Navigator 끝 -->
-
-</form>
-
-</div>
 </body>
 </html>

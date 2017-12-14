@@ -49,7 +49,7 @@
 
 		 $(function() {
 			$( "button.btn.btn-default" ).on("click" , function() {
-				fncGetUserList(1);
+				fncGetList(1);
 			});
 			 
 			$( "td:nth-child(2)" ).on("click" , function() {
@@ -60,49 +60,51 @@
 			$( "td:nth-child(2)" ).css("color" , "red");
 			
 
-			$( "td:nth-child(5) > i" ).on({
+			/*
+			$( "td:nth-child(2)" ).on({
 				"mouseenter" : function() {
-				/*
-				var userId = $(this).text().trim();
-				$.ajax( 
-					{
-						url : "/user/json/getUser/"+userId ,
-						method : "GET" ,
-						dataType : "json" ,
-						headers : {
-							"Accept" : "application/json",
-							"Content-Type" : "application/json"
-						},
-						success : function(JSONData , status) {
-
-							//Debug...
-							//alert(status);
-							//Debug...
-							//alert("JSONData : \n"+JSONData);
-							
-							var displayValue = "<h3>"
-														+"아이디 : "+JSONData.userId+"<br/>"
-														+"이  름 : "+JSONData.userName+"<br/>"
-														+"이메일 : "+JSONData.email+"<br/>"
-														+"ROLE : "+JSONData.role+"<br/>"
-														+"등록일 : "+JSONData.regDate+"<br/>"
-														+"</h3>";
-							//Debug...									
-							//alert(displayValue);
-							$("h3").remove();
-							$( "#"+userId+"" ).html(displayValue);
-						}
-					});
-				*/
+					var id = $(this).attr("id");
 					var userId = $(this).text().trim();
-					$( "#"+userId+"" ).show();
+					alert(id);
+					$( "#"+id+"" ).show();
 				}, "mouseleave" : function() {
+					var id = $(this).attr('id');
 					var userId = $(this).text().trim();
-					$( "#"+userId+"" ).hide();
+					$( "#"+id+"" ).hide();
 					//$("h3").remove();
 				}, "click" : function() {
 					self.location ="/user/getUser?userId="+$(this).text().trim();
 				}
+			});
+			*/
+			
+			$(  "td:nth-child(5) > i" ).on("click" , function() {
+
+				var userId = $(this).next().val();
+			
+				$.ajax( 
+						{
+							url : "/user/json/getUser/"+userId ,
+							method : "GET" ,
+							dataType : "json" ,
+							headers : {
+								"Accept" : "application/json",
+								"Content-Type" : "application/json"
+							},
+							success : function(JSONData , status) {
+
+								var displayValue = "<h6>"
+															+"아이디 : "+JSONData.userId+"<br/>"
+															+"이  름 : "+JSONData.userName+"<br/>"
+															+"이메일 : "+JSONData.email+"<br/>"
+															+"ROLE : "+JSONData.role+"<br/>"
+															+"등록일 : "+JSONData.regDate+"<br/>"
+															+"</h6>";
+								$("h6").remove();
+								$( "#"+userId+"" ).html(displayValue);
+							}
+					});
+		
 			});
 		});	
 	</script>		
@@ -167,6 +169,7 @@
             <th align="center">No</th>
             <th align="left" >회원 ID</th>
             <th align="left">회원명</th>
+            <th align="left">SNS 로그인</th>
             <th align="left">이메일</th>
             <th align="left">간략정보</th>
           </tr>
@@ -181,11 +184,21 @@
 			  <td align="center">${ i }</td>
 			  <td align="left"  title="Click : 회원정보 확인">${user.userId}</td>
 			  <td align="left">${user.userName}</td>
+			  <td align="left">${user.snsType}</td>
 			  <td align="left">${user.email}</td>
 			  <td align="left">
 			  	<i class="glyphicon glyphicon-ok" id= "${user.userId}"></i>
 			  	<input type="hidden" value="${user.userId}">
 			  </td>
+			</tr>
+			<tr>
+				<td id="user${i}" colspan="11" bgcolor="D6D7D6" height="1" style="display : none">
+					아이디: ${user.userId} <br/>
+					이  름: ${user.userName} <br/>
+					이메일: ${user.email} <br/>
+					ROLE: ${user.role} <br/>
+					등록일: ${user.regDate}
+				</td>
 			</tr>
           </c:forEach>
         
